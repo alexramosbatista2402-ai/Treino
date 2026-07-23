@@ -885,7 +885,8 @@
 #tela-exercicios .filter-tags-container { display: flex; gap: 8px; margin-top: -4px; margin-bottom: 4px; padding-left: 4px; }
 #tela-exercicios .filter-tag { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-secondary); padding: 6px 14px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
 #tela-exercicios .filter-tag.active { background: var(--amber-dim); border-color: rgba(255, 122, 61, 0.3); color: var(--amber); }
-#tela-exercicios .exercises-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+#tela-exercicios .exercises-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#tela-exercicios #screenList .content { padding-left: 6px; padding-right: 6px; }
 #tela-exercicios .exercise-card { 
     background: var(--surface-card); 
     border-radius: 16px; 
@@ -1200,6 +1201,10 @@
   /* ==================================================== */
   /* ================ TELA: PERFIL ======================== */
   /* ==================================================== */
+
+  #tela-perfil { display: flex;
+    flex-direction: column;
+    gap: 24px; }
 
   #tela-perfil .profile-container { display: flex;
     flex-direction: column;
@@ -2885,8 +2890,8 @@
 
   const DEFAULT_EXERCISES = [
     // Peito
-    { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "reto_barra.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "inclinado_barra.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 10, weight: "30", rest: 60, image: "supino-maquina.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 4, reps: 10, weight: "16", rest: 60, image: "supino-reto-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
