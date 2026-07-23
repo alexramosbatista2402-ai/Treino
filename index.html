@@ -2872,7 +2872,7 @@
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
         <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
       </div>
-      <div class="form-group"><label>Vídeo (YouTube)</label><input type="text" id="inputVideoLink" placeholder="Cole o link do YouTube"></div>
+      <div class="form-group"><label>Vídeo</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou do vídeo (.mp4)"></div>
       <button class="save-btn" id="saveBtn">Salvar Alterações</button>
       <button class="btn-modal btn-modal-delete" id="deleteExerciseBtn" style="margin-top: 12px; width: 100%; display: none;">Remover Exercício</button>
     </div>
@@ -2894,7 +2894,7 @@
     // Peito
     { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 10, weight: "30", rest: 60, image: "supino-maquina.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 4, reps: 10, weight: "16", rest: 60, image: "supino-reto-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-inclinado-halteres", name: "Supino Inclinado", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "supino-inclinado-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
@@ -3112,6 +3112,11 @@
     return match ? match[1] : null;
   }
 
+  function isDirectVideoLink(url) {
+    if (!url) return false;
+    return /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(String(url).trim());
+  }
+
   function renderExercises() {
     exercisesGrid.innerHTML = "";
     const filtered = workoutDatabase.filter(item => item.muscle === activeMuscleGroup);
@@ -3127,6 +3132,8 @@
       const ytId = getYouTubeId(ex.image);
       if (ytId) {
         mediaHtml = `<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg">`;
+      } else if (isDirectVideoLink(ex.image)) {
+        mediaHtml = `<video src="${ex.image}" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video>`;
       } else {
         mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
       }
@@ -3222,6 +3229,8 @@
     const ytId = getYouTubeId(ex.image);
     if (ytId) {
       exImageWrapper.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&playsinline=1&modestbranding=1" title="${ex.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    } else if (isDirectVideoLink(ex.image)) {
+      exImageWrapper.innerHTML = `<video src="${ex.image}" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video>`;
     } else {
       exImageWrapper.innerHTML = `<svg class="illustration" viewBox="0 0 100 100" fill="none" style="width:auto;height:60%;opacity:0.85;"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
     }
