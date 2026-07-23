@@ -467,26 +467,28 @@
   #tela-inicio .stat-card{
     background: #16181D;
     border: 1.5px solid rgba(255, 255, 255, 0.04);
-    border-radius: 24px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     min-width: 0;
     overflow: hidden;
   }
 
   #tela-inicio .stat-header {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 10px;
     min-width: 0;
+    width: 100%;
   }
 
   #tela-inicio .stat-icon-wrapper{
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -517,12 +519,14 @@
   }
 
   #tela-inicio .stat-label{
-    font-size: 13.5px;
+    font-size: 13px;
     color: #FFFFFF;
     font-weight: 800;
     line-height: 1.3;
     min-width: 0;
-    word-break: break-word;
+    width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   /* SEÇÃO: HISTÓRICO */
@@ -822,17 +826,17 @@
 #tela-exercicios .flow-header { padding: 40px 24px 20px; display: flex; flex-direction: column; gap: 8px; }
 #tela-exercicios .flow-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; line-height: 1.25; color: var(--amber); }
 #tela-exercicios .flow-description { font-size: 15px; color: var(--text-dim); line-height: 1.5; }
-#tela-exercicios .muscle-content { padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+#tela-exercicios .muscle-content { padding: 8px 12px 32px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
 #tela-exercicios .muscle-button {
     background: var(--surface);
     border: 1.5px solid rgba(255, 255, 255, 0.04);
     border-radius: 20px;
-    padding: 0 12px 0 24px;
+    padding: 0 10px 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     text-decoration: none;
-    height: 110px;
+    height: 118px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -859,15 +863,15 @@
   }
 #tela-exercicios .muscle-manage-btn:hover { color: var(--amber); background: rgba(255, 122, 61, 0.1); border-color: rgba(255, 122, 61, 0.3); }
 #tela-exercicios .muscle-right-side { display: flex; align-items: center; height: 100%; }
-#tela-exercicios .muscle-graphic { width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; pointer-events: none; border-radius: 50%; }
+#tela-exercicios .muscle-graphic { width: 104px; height: 104px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; pointer-events: none; border-radius: 50%; }
 #tela-exercicios .muscle-graphic img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 #tela-exercicios .muscle-button:hover .muscle-graphic img { transform: scale(1.08); }
-#tela-exercicios .add-muscle-button { background: transparent; border: 2px dashed rgba(255, 122, 61, 0.25); border-radius: 20px; height: 110px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--amber-2); font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; margin-top: 4px; }
+#tela-exercicios .add-muscle-button { background: transparent; border: 2px dashed rgba(255, 122, 61, 0.25); border-radius: 20px; height: 118px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--amber-2); font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; margin-top: 4px; }
 #tela-exercicios .add-muscle-button:hover { background: rgba(255, 122, 61, 0.04); border-color: var(--amber); color: var(--amber); transform: translateY(-2px); }
 #tela-exercicios .add-muscle-button:active { transform: scale(0.98); }
 #tela-exercicios .add-muscle-button svg { width: 22px; height: 22px; stroke: currentColor; transition: transform 0.25s ease; }
 #tela-exercicios .add-muscle-button:hover svg { transform: rotate(90deg); }
-#tela-exercicios .content { padding: 24px 20px 32px; display: flex; flex-direction: column; gap: 20px; flex-grow: 1; }
+#tela-exercicios .content { padding: 24px 12px 32px; display: flex; flex-direction: column; gap: 20px; flex-grow: 1; }
 #tela-exercicios .workout-header { display: flex; flex-direction: column; gap: 6px; position: relative; }
 #tela-exercicios .workout-header-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 #tela-exercicios .workout-header-left { display: flex; align-items: center; gap: 12px; }
@@ -881,7 +885,7 @@
 #tela-exercicios .filter-tags-container { display: flex; gap: 8px; margin-top: -4px; margin-bottom: 4px; padding-left: 4px; }
 #tela-exercicios .filter-tag { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-secondary); padding: 6px 14px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
 #tela-exercicios .filter-tag.active { background: var(--amber-dim); border-color: rgba(255, 122, 61, 0.3); color: var(--amber); }
-#tela-exercicios .exercises-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+#tela-exercicios .exercises-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 #tela-exercicios .exercise-card { 
     background: var(--surface-card); 
     border-radius: 16px; 
@@ -915,7 +919,7 @@
     font-weight: 800;
     font-size: 13px;
   }
-#tela-exercicios .card-media { position: relative; background: #FFFFFF; height: 120px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+#tela-exercicios .card-media { position: relative; background: #FFFFFF; height: 140px; display: flex; align-items: center; justify-content: center; padding: 12px; }
 #tela-exercicios .card-media img, #tela-exercicios .card-media video { width: auto; height: 85%; object-fit: contain; pointer-events: none; }
 #tela-exercicios .card-media svg.illustration { width: auto; height: 80%; opacity: 0.85; }
 #tela-exercicios .favorite-btn { 
@@ -1517,10 +1521,12 @@
   #tela-perfil .photo-date-lbl { font-size: 11px;
     color: var(--text-secondary); }
 
-  #tela-perfil .modal-overlay { position: absolute;
+  #tela-perfil .modal-overlay { position: fixed;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
+    max-width: 430px;
     height: 100%;
     background: rgba(5, 5, 5, 0.85);
     backdrop-filter: blur(8px);
@@ -1639,8 +1645,8 @@
   </div>
 
   <nav class="bottom-nav">
-    <!-- Link 1: Início -->
-    <a href="#" class="nav-item" onclick="mudarAba(this, 'Início')">
+    <!-- Link 1: Início (Inicia ativo) -->
+    <a href="#" class="nav-item active" onclick="mudarAba(this, 'Início')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
         <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -1657,8 +1663,8 @@
       <span>Histórico</span>
     </a>
     
-    <!-- Link 3: Exercícios (Inicia ativo) -->
-    <a href="#" class="nav-item active" onclick="mudarAba(this, 'Exercícios')">
+    <!-- Link 3: Exercícios -->
+    <a href="#" class="nav-item" onclick="mudarAba(this, 'Exercícios')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14.4 14.4 9.6 9.6"></path>
         <path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path>
@@ -5392,7 +5398,6 @@
   // Abre/fecha Modais padrão
   openProfileModalBtn.addEventListener('click', () => profileModal.classList.add('open'));
   closeProfileModalBtn.addEventListener('click', () => profileModal.classList.remove('open'));
-  profileModal.addEventListener('click', (e) => { if (e.target === profileModal) profileModal.classList.remove('open'); });
 
   openWeightModalBtn.addEventListener('click', () => {
     dataMudancaAtual = new Date();
@@ -5428,7 +5433,6 @@
   // Abre/fecha Modal Fotos
   openPhotosModalBtn.addEventListener('click', (e) => { e.preventDefault(); photosModal.classList.add('open'); });
   closePhotosModalBtn.addEventListener('click', () => photosModal.classList.remove('open'));
-  photosModal.addEventListener('click', (e) => { if (e.target === photosModal) photosModal.classList.remove('open'); });
 
   document.getElementById('file-after').addEventListener('change', function() {
     this.previousElementSibling.textContent = this.files[0] ? this.files[0].name.substring(0, 12) + '...' : 'Selecionar Imagem';
@@ -5746,6 +5750,9 @@
     profileModal.classList.remove('open');
   });
   }
+
+  // Carrega a tela Início automaticamente ao abrir o app pela primeira vez
+  carregarTelaInicio(document.getElementById('main-content'));
 </script>
 
 </body>
