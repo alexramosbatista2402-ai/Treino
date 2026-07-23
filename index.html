@@ -920,8 +920,9 @@
     font-weight: 800;
     font-size: 13px;
   }
-#tela-exercicios .card-media { position: relative; background: #FFFFFF; height: 140px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+#tela-exercicios .card-media { position: relative; background: #FFFFFF; height: 140px; display: flex; align-items: center; justify-content: center; padding: 12px; overflow: hidden; }
 #tela-exercicios .card-media img, #tela-exercicios .card-media video { width: auto; height: 85%; object-fit: contain; pointer-events: none; }
+#tela-exercicios .card-media img.yt-thumb { width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(1.35); }
 #tela-exercicios .card-media svg.illustration { width: auto; height: 80%; opacity: 0.85; }
 #tela-exercicios .favorite-btn { 
     position: absolute; 
@@ -964,6 +965,7 @@
 #tela-exercicios .exercise-info h2 { font-size: 20px; font-weight: 700; color: var(--text); }
 #tela-exercicios .exercise-image-wrapper { width: 100%; background: #FFFFFF; border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 10; }
 #tela-exercicios .exercise-image-wrapper img, #tela-exercicios .exercise-image-wrapper video { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+#tela-exercicios .exercise-image-wrapper iframe { width: 100%; height: 100%; border: 0; }
 #tela-exercicios .card-media video, #tela-exercicios .exercise-image-wrapper video { -webkit-user-select: none; }
 #tela-exercicios video::-webkit-media-controls-picture-in-picture-button, #tela-exercicios video::-webkit-media-controls-overlay-enclosure, #tela-exercicios video::-webkit-media-controls-panel { display: none !important; }
 #tela-exercicios .metrics-container { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; }
@@ -2794,7 +2796,7 @@
 
       <main class="exercise-card-detail">
         <div class="exercise-info"><h2 id="exName">Supino Reto</h2></div>
-        <div class="exercise-image-wrapper"><video id="exImage" src="" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video></div>
+        <div class="exercise-image-wrapper" id="exImageWrapper"></div>
       </main>
 
       <section class="metrics-container">
@@ -2870,7 +2872,7 @@
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
         <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
       </div>
-      <div class="form-group"><label>Foto</label><div class="file-input-wrapper"><div class="file-input-label" id="fileLabel">Galeria</div><input type="file" id="inputImageFile" accept="image/*"></div></div>
+      <div class="form-group"><label>Vídeo (YouTube)</label><input type="text" id="inputVideoLink" placeholder="Cole o link do YouTube"></div>
       <button class="save-btn" id="saveBtn">Salvar Alterações</button>
       <button class="btn-modal btn-modal-delete" id="deleteExerciseBtn" style="margin-top: 12px; width: 100%; display: none;">Remover Exercício</button>
     </div>
@@ -2886,13 +2888,13 @@
 
   let activeMuscleGroup = "peito"; 
 
-  const DATABASE_VERSION = "v18_mp4_video";
+  const DATABASE_VERSION = "v19_youtube_video";
 
   const DEFAULT_EXERCISES = [
     // Peito
     { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 10, weight: "30", rest: 60, image: "supino-maquina.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 4, reps: 10, weight: "16", rest: 60, image: "supino-reto-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-inclinado-halteres", name: "Supino Inclinado", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "supino-inclinado-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
@@ -3104,7 +3106,11 @@
   const filterHistoryBtn = document.getElementById('filterHistoryBtn');
   let currentFilter = 'all'; let activeExerciseId = null; let isEditingMode = true;
 
-  function isVideoFile(path) { return /\.(mp4|webm|mov|ogg)$/i.test(path || ""); }
+  function getYouTubeId(url) {
+    if (!url) return null;
+    const match = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
+  }
 
   function renderExercises() {
     exercisesGrid.innerHTML = "";
@@ -3118,12 +3124,11 @@
       card.className = `exercise-card ${ex.completedToday ? 'completed' : ''}`;
       card.setAttribute('data-id', ex.id);
       let mediaHtml;
-      if (!ex.image) {
-        mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
-      } else if (isVideoFile(ex.image)) {
-        mediaHtml = `<video src="${ex.image}" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video>`;
+      const ytId = getYouTubeId(ex.image);
+      if (ytId) {
+        mediaHtml = `<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg">`;
       } else {
-        mediaHtml = `<img src="${ex.image}">`;
+        mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
       }
       
       card.innerHTML = `
@@ -3204,16 +3209,22 @@
   backToGridBtn.addEventListener('click', () => changeScreen('treinos'));
 
   const seriesBtn = document.getElementById('seriesBtn'); const exSeriesText = document.getElementById('exSeriesText'); const restBtn = document.getElementById('restBtn'); const restDisplay = document.getElementById('restDisplay'); const restLabel = document.getElementById('restLabel');
-  const exName = document.getElementById('exName'); const exImage = document.getElementById('exImage'); const exRepsText = document.getElementById('exRepsText'); const tagWeightDisplay = document.getElementById('tagWeightDisplay'); const contentHistoricoIndividual = document.getElementById('contentHistoricoIndividual');
+  const exName = document.getElementById('exName'); const exImageWrapper = document.getElementById('exImageWrapper'); const exRepsText = document.getElementById('exRepsText'); const tagWeightDisplay = document.getElementById('tagWeightDisplay'); const contentHistoricoIndividual = document.getElementById('contentHistoricoIndividual');
   const openSettings = document.getElementById('openSettings'); const closeSettings = document.getElementById('closeSettings'); const modalOverlay = document.getElementById('modalOverlay'); const saveBtn = document.getElementById('saveBtn'); const deleteExerciseBtn = document.getElementById('deleteExerciseBtn');
-  const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputImageFile = document.getElementById('inputImageFile');
+  const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputVideoLink = document.getElementById('inputVideoLink');
   const containerInputName = document.getElementById('containerInputName'); const containerInputVariation = document.getElementById('containerInputVariation');
 
   let timerInterval = null; let defaultRestTime = 60; let timeRemaining = 60; let seriesFeitasCount = 0; let totalSeriesGoal = 3; let repsPerSeries = 10; let pesoKg = '20';
 
   function loadExerciseToDetail(id) {
     const ex = workoutDatabase.find(i => i.id === id); if (!ex) return;
-    exName.textContent = ex.name + " " + (ex.variation || ""); exImage.src = ex.image || "peck-deck.mp4"; exImage.load(); exImage.play().catch(()=>{});
+    exName.textContent = ex.name + " " + (ex.variation || "");
+    const ytId = getYouTubeId(ex.image);
+    if (ytId) {
+      exImageWrapper.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&playsinline=1&modestbranding=1" title="${ex.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    } else {
+      exImageWrapper.innerHTML = `<svg class="illustration" viewBox="0 0 100 100" fill="none" style="width:auto;height:60%;opacity:0.85;"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
+    }
     totalSeriesGoal = ex.series; repsPerSeries = ex.reps; pesoKg = ex.weight; defaultRestTime = ex.rest; seriesFeitasCount = ex.completedToday ? totalSeriesGoal : 0;
     if (timerInterval) stopTimer(); updateMetricsDisplay();
   }
@@ -3268,6 +3279,7 @@
     inputReps.value = ex.reps; 
     inputWeight.value = ex.weight; 
     inputRest.value = ex.rest; 
+    inputVideoLink.value = ex.image || "";
     
     document.getElementById('modalTitle').textContent = "Editar Exercício";
 
@@ -3291,6 +3303,7 @@
     inputReps.value="10"; 
     inputWeight.value="20"; 
     inputRest.value="60"; 
+    inputVideoLink.value = "";
     
     document.getElementById('modalTitle').textContent = "Novo Exercício";
     containerInputName.style.display = "flex";
@@ -3313,11 +3326,12 @@
         ex.reps = parseInt(inputReps.value) || 10; 
         ex.weight = inputWeight.value.trim() || "0"; 
         ex.rest = parseInt(inputRest.value) || 60; 
+        ex.image = inputVideoLink.value.trim() || ex.image;
       }
     } else {
       const nameVal = inputName.value.trim() || "Exercício";
       const uid = `ex-${Date.now()}`;
-      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 10, weight: inputWeight.value.trim() || "0", rest: parseInt(inputRest.value) || 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
+      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 10, weight: inputWeight.value.trim() || "0", rest: parseInt(inputRest.value) || 60, image: inputVideoLink.value.trim() || "", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
       activeExerciseId = uid;
     }
     saveDatabase(); renderExercises(); loadExerciseToDetail(activeExerciseId); modalOverlay.classList.remove('active');
