@@ -3098,6 +3098,7 @@
           todayLog.date = "Treino anterior";
         }
       });
+      localStorage.setItem('workout_history_db', JSON.stringify(historyDatabase));
       workoutDatabase.forEach(ex => { ex.completedToday = false; });
       saveDatabase();
       localStorage.setItem('workout_last_date', todayStr);
@@ -3414,8 +3415,17 @@
         if (!historyDatabase[activeMuscleGroup]) historyDatabase[activeMuscleGroup] = [];
         let logIndex = historyDatabase[activeMuscleGroup].findIndex(h => h.date === "Hoje");
         const exFullName = `${ex.name} ${ex.variation || ''}`.trim();
-        if(logIndex === -1) {
-          historyDatabase[activeMuscleGroup].unshift({ date: "Hoje", exercises: [{ name: exFullName, weight: pesoKg.includes('kg') ? pesoKg : `${pesoKg}kg` }] });
+        const weightStr = pesoKg.includes('kg') ? pesoKg : `${pesoKg}kg`;
+        if (logIndex === -1) {
+          historyDatabase[activeMuscleGroup].unshift({ date: "Hoje", exercises: [{ name: exFullName, weight: weightStr }] });
+        } else {
+          const dayLog = historyDatabase[activeMuscleGroup][logIndex];
+          const exIndexInDay = dayLog.exercises.findIndex(item => item.name === exFullName);
+          if (exIndexInDay === -1) {
+            dayLog.exercises.push({ name: exFullName, weight: weightStr });
+          } else {
+            dayLog.exercises[exIndexInDay].weight = weightStr;
+          }
         }
         localStorage.setItem('workout_history_db', JSON.stringify(historyDatabase));
 
@@ -6163,18 +6173,4 @@
     if (temValoresValidos) {
       const novaData = obterDataFormatadaAtual();
       if (historicoDeMedidasRegistradas.length > 0 && historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].data === novaData) {
-        historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].valores = novasMedidas;
-      } else {
-        historicoDeMedidasRegistradas.push({ data: novaData, valores: novasMedidas });
-      }
-      indiceDoRegistroAtualVisualizado = historicoDeMedidasRegistradas.length - 1;
-      renderizarRegistroDeMedidas(indiceDoRegistroAtualVisualizado);
-      profileData.historicoDeMedidasRegistradas = historicoDeMedidasRegistradas;
-      saveProfileData(profileData);
-    }
-    definirMembroDesde();
-    measuresModal.classList.remove('open');
-  });
-
-  function definirMembroDesde() {
- 
+        historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].valores = no
