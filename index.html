@@ -1906,6 +1906,33 @@
     return Object.values(fotosPorData).reduce((soma, lista) => soma + (Array.isArray(lista) ? lista.length : 0), 0);
   }
 
+  // Compara o primeiro e o último registro de medidas de cada músculo e
+  // devolve quantos cm foram ganhos em cada um (nunca menor que 0)
+  function calcularGanhosDeMedidas() {
+    const medidasChaves = ['ombro', 'peito', 'costas', 'biceps', 'triceps', 'cintura', 'coxa', 'panturrilha'];
+    const ganhos = {};
+    medidasChaves.forEach(chave => ganhos[chave] = 0);
+
+    const profileData = getProfileData();
+    const historico = profileData.historicoDeMedidasRegistradas || [];
+    if (historico.length < 2) return ganhos;
+
+    medidasChaves.forEach(chave => {
+      let primeiro = null, ultimo = null;
+      historico.forEach(registro => {
+        const valor = registro.valores ? registro.valores[chave] : null;
+        if (valor !== null && valor !== undefined) {
+          if (primeiro === null) primeiro = valor;
+          ultimo = valor;
+        }
+      });
+      if (primeiro !== null && ultimo !== null) {
+        ganhos[chave] = Math.max(0, ultimo - primeiro);
+      }
+    });
+    return ganhos;
+  }
+
   const ACHIEVEMENTS_CONFIG = {
     'perder-1kg': { tipo: 'peso_perdido', meta: 1, unidade: 'kg' },
     'perder-5kg': { tipo: 'peso_perdido', meta: 5, unidade: 'kg' },
@@ -1935,8 +1962,12 @@
     'mes-6': { tipo: 'dias_treinados', meta: 180 },
     'ano-1': { tipo: 'dias_treinados', meta: 365 },
     'carga-5-exercicios': { tipo: 'carga_aumentada', meta: 5 },
+    'carga-primeira-vez': { tipo: 'carga_aumentada', meta: 1 },
+    'carga-10-exercicios': { tipo: 'carga_aumentada', meta: 10 },
     'semana-total-mes': { tipo: 'semanas_mes', meta: 1 },
-    'primeira-evolucao': { tipo: 'fotos_evolucao', meta: 1 }
+    'primeira-evolucao': { tipo: 'fotos_evolucao', meta: 1 },
+    'ganho-1cm-todos': { tipo: 'medidas_todos_1cm', meta: 8 },
+    'ganho-3cm-3musculos': { tipo: 'medidas_3musculos_3cm', meta: 3 }
   };
 
   // Título e descrição de cada conquista, usados no modal de parabenização
@@ -1969,8 +2000,12 @@
     'mes-6': { titulo: '6 meses de treinos', desc: '180 treinos concluídos' },
     'ano-1': { titulo: '1 ano de treino', desc: '365 treinos concluídos' },
     'carga-5-exercicios': { titulo: 'Aumentou carga em 5 exercícios', desc: 'Cargas cada vez mais pesadas' },
+    'carga-primeira-vez': { titulo: 'Aumentou a carga pela primeira vez', desc: 'O início da evolução de força' },
+    'carga-10-exercicios': { titulo: 'Aumentou a carga em 10 exercícios', desc: 'Força em ascensão' },
     'semana-total-mes': { titulo: 'Treinou todas as semanas do mês', desc: 'Nenhuma semana ficou de fora' },
-    'primeira-evolucao': { titulo: 'Publicou sua primeira evolução', desc: '1ª foto de evolução enviada' }
+    'primeira-evolucao': { titulo: 'Publicou sua primeira evolução', desc: '1ª foto de evolução enviada' },
+    'ganho-1cm-todos': { titulo: 'Ganhou 1cm em todos os músculos', desc: 'Evolução completa no corpo todo' },
+    'ganho-3cm-3musculos': { titulo: 'Ganhou 3cm em 3 músculos', desc: 'Crescimento visível' }
   };
 
   // Calcula o progresso atual de uma conquista a partir das estatísticas
@@ -1996,6 +2031,12 @@
       atual = treinouTodasSemanasDoMes(stats.diasTreinados) ? 1 : 0;
     } else if (cfg.tipo === 'fotos_evolucao') {
       atual = totalFotosEvolucao(stats.fotosPorData);
+    } else if (cfg.tipo === 'medidas_todos_1cm') {
+      const ganhos = calcularGanhosDeMedidas();
+      atual = Object.values(ganhos).filter(g => g >= 1).length;
+    } else if (cfg.tipo === 'medidas_3musculos_3cm') {
+      const ganhos = calcularGanhosDeMedidas();
+      atual = Object.values(ganhos).filter(g => g >= 3).length;
     }
     return { atual: Math.min(atual, cfg.meta), atingiu: atual >= cfg.meta };
   }
@@ -2078,6 +2119,12 @@
         atual = treinouTodasSemanasDoMes(stats.diasTreinados) ? 1 : 0;
       } else if (cfg.tipo === 'fotos_evolucao') {
         atual = totalFotosEvolucao(stats.fotosPorData);
+      } else if (cfg.tipo === 'medidas_todos_1cm') {
+        const ganhos = calcularGanhosDeMedidas();
+        atual = Object.values(ganhos).filter(g => g >= 1).length;
+      } else if (cfg.tipo === 'medidas_3musculos_3cm') {
+        const ganhos = calcularGanhosDeMedidas();
+        atual = Object.values(ganhos).filter(g => g >= 3).length;
       }
 
       atual = Math.min(atual, cfg.meta);
@@ -5050,6 +5097,47 @@
       </div>
 
       <!-- CARD: AUMENTOU CARGA EM 5 EXERCÍCIOS -->
+      <!-- CARD: AUMENTOU A CARGA PELA PRIMEIRA VEZ -->
+      <div class="achievement-card locked" data-achievement="carga-primeira-vez">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <svg class="medal-badge" viewBox="0 0 100 108">
+              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
+              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
+              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
+              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
+              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
+              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+              <g transform="translate(50,68) scale(1.15)">
+                <rect x="-24" y="-4" width="48" height="8" rx="2" fill="#33353a" />
+                <rect x="-24" y="-11" width="6" height="22" rx="2" fill="#33353a" />
+                <rect x="18" y="-11" width="6" height="22" rx="2" fill="#33353a" />
+                <rect x="-30" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
+                <rect x="26" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
+                <polygon points="0,-20 4,-12 -4,-12" fill="#33353a" />
+              </g>
+            </svg>
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
+          <h3>Aumentou a carga pela primeira vez</h3>
+          <p>O início da evolução de força</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 1</div>
+        </div>
+      </div>
+
       <div class="achievement-card locked" data-achievement="carga-5-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
@@ -5087,6 +5175,47 @@
             <div class="progress-bar" style="width: 0%;"></div>
           </div>
           <div class="progress-text">0 / 5</div>
+        </div>
+      </div>
+
+      <!-- CARD: AUMENTOU A CARGA EM 10 EXERCÍCIOS -->
+      <div class="achievement-card locked" data-achievement="carga-10-exercicios">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <svg class="medal-badge" viewBox="0 0 100 108">
+              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
+              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
+              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
+              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
+              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
+              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+              <g transform="translate(50,68) scale(1.15)">
+                <rect x="-24" y="-4" width="48" height="8" rx="2" fill="#33353a" />
+                <rect x="-24" y="-11" width="6" height="22" rx="2" fill="#33353a" />
+                <rect x="18" y="-11" width="6" height="22" rx="2" fill="#33353a" />
+                <rect x="-30" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
+                <rect x="26" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
+                <polygon points="0,-20 4,-12 -4,-12" fill="#33353a" />
+              </g>
+            </svg>
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
+          <h3>Aumentou a carga em 10 exercícios</h3>
+          <p>Força em ascensão</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 10</div>
         </div>
       </div>
 
@@ -5165,6 +5294,86 @@
             <div class="progress-bar" style="width: 0%;"></div>
           </div>
           <div class="progress-text">0 / 1</div>
+        </div>
+      </div>
+
+      <!-- CARD: GANHOU 1CM EM TODOS OS MÚSCULOS -->
+      <div class="achievement-card locked" data-achievement="ganho-1cm-todos">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <svg class="medal-badge" viewBox="0 0 100 108">
+              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#A78BFA" />
+              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#7C5CD9" />
+              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
+              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
+              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
+              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+              <g transform="translate(50,68)">
+                <rect x="-22" y="-9" width="44" height="18" rx="4" fill="none" stroke="#33353a" stroke-width="3.5" />
+                <line x1="-13" y1="-9" x2="-13" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="-4" y1="-9" x2="-4" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="5" y1="-9" x2="5" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="14" y1="-9" x2="14" y2="-2" stroke="#33353a" stroke-width="2.5" />
+              </g>
+            </svg>
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
+          <h3>Ganhou 1cm em todos os músculos</h3>
+          <p>Evolução completa no corpo todo</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 8</div>
+        </div>
+      </div>
+
+      <!-- CARD: GANHOU 3CM EM 3 MÚSCULOS -->
+      <div class="achievement-card locked" data-achievement="ganho-3cm-3musculos">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <svg class="medal-badge" viewBox="0 0 100 108">
+              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F472B6" />
+              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#BE4C82" />
+              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
+              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
+              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
+              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
+              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+              <g transform="translate(50,68)">
+                <rect x="-22" y="-9" width="44" height="18" rx="4" fill="none" stroke="#33353a" stroke-width="3.5" />
+                <line x1="-13" y1="-9" x2="-13" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="-4" y1="-9" x2="-4" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="5" y1="-9" x2="5" y2="-2" stroke="#33353a" stroke-width="2.5" />
+                <line x1="14" y1="-9" x2="14" y2="-2" stroke="#33353a" stroke-width="2.5" />
+              </g>
+            </svg>
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
+          <h3>Ganhou 3cm em 3 músculos</h3>
+          <p>Crescimento visível</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 3</div>
         </div>
       </div>
 
@@ -6213,6 +6422,7 @@
       renderizarRegistroDeMedidas(indiceDoRegistroAtualVisualizado);
       profileData.historicoDeMedidasRegistradas = historicoDeMedidasRegistradas;
       saveProfileData(profileData);
+      checarNovasConquistas();
     }
     definirMembroDesde();
     measuresModal.classList.remove('open');
