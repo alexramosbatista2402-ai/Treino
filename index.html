@@ -2752,7 +2752,7 @@
       if (combinedRecords.length === 0) { historyContent.innerHTML = `<div class="empty-history-msg">Nenhum treino no período.</div>`; return; }
       let html = `<div class="history-card">`;
       combinedRecords.forEach(item => {
-        html += `<a href="#" class="history-item ${item.type}"><div class="history-date"><span class="day-num">${item.dayNum}</span><span class="day-name">${item.dayName}</span></div><div class="history-info"><span class="history-title">${item.title}</span><span class="history-desc">${item.subtitle}</span></div><div class="history-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div></a>`;
+        html += `<a href="#" class="history-item ${item.type}"><div class="history-date"><span class="day-num">${item.dayNum}</span><span class="day-name">${item.dayName}</span></div><div class="history-info"><span class="history-title">${item.title}</span><span class="history-desc">${item.subtitle}</span></div></a>`;
       });
       historyContent.innerHTML = html + `</div>`;
     }
@@ -6173,4 +6173,8 @@
     if (temValoresValidos) {
       const novaData = obterDataFormatadaAtual();
       if (historicoDeMedidasRegistradas.length > 0 && historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].data === novaData) {
-        historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].valores = no
+        historicoDeMedidasRegistradas[historicoDeMedidasRegistradas.length - 1].valores = novasMedidas;
+      } else {
+        historicoDeMedidasRegistradas.push({ data: novaData, valores: novasMedidas });
+      }
+      indiceDoRegistroAtualVisualizado = h
