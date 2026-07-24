@@ -370,14 +370,11 @@
     color: var(--amber-2) !important;
   }
 
-  #tela-inicio .day-pill.past.no-workout {
-    opacity: 0.4;
-  }
   #tela-inicio .day-pill.past.no-workout .num {
-    color: var(--text-dim) !important;
+    color: #FFFFFF !important;
   }
   #tela-inicio .day-pill.past.no-workout .dow {
-    color: var(--text-faint) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
   }
 
   #tela-inicio .day-pill:disabled {
@@ -2645,8 +2642,8 @@
           const info = ACHIEVEMENT_LABELS[id] || { titulo: 'Conquista desbloqueada', desc: '' };
           eventos.push({
             type: 'conquista',
-            title: info.titulo,
-            subtitle: info.desc
+            title: 'Conquista',
+            subtitle: info.titulo
           });
         });
       }
