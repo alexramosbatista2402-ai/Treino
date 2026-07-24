@@ -1093,6 +1093,18 @@
     width: 100%;
     height: 100%;
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.35));
+    transition: filter 0.4s ease;
+  }
+  /* Conquista ainda bloqueada: medalha inteira em preto e branco */
+#tela-conquistas .achievement-card.locked .medal-badge {
+    filter: grayscale(1) brightness(0.55) contrast(1.05) drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.35));
+  }
+  /* Conquista desbloqueada: medalha fica dourada */
+#tela-conquistas .achievement-card.unlocked .medal-badge circle:nth-of-type(1) {
+    fill: url(#rim-gold);
+  }
+#tela-conquistas .achievement-card.unlocked .medal-badge circle:nth-of-type(2) {
+    fill: url(#face-gold);
   }
 #tela-conquistas .status-indicator {
     position: absolute;
@@ -2702,10 +2714,17 @@
 
     function temEventosNaData(dateStr) {
       const stats = getStats();
-      const temTreino = stats.diario && stats.diario[dateStr] && Object.keys(stats.diario[dateStr]).length > 0;
+      const temTreino = temTreinoConcluidoNaData(dateStr);
       const temFoto = stats.fotosPorData && stats.fotosPorData[dateStr] && stats.fotosPorData[dateStr].length > 0;
       const temConquista = stats.conquistasPorData && stats.conquistasPorData[dateStr] && stats.conquistasPorData[dateStr].length > 0;
       return !!(temTreino || temFoto || temConquista);
+    }
+
+    // Usada para pintar o dia de laranja no calendário: só considera dias
+    // em que algum exercício foi realmente concluído (não fotos/conquistas)
+    function temTreinoConcluidoNaData(dateStr) {
+      const stats = getStats();
+      return !!(stats.diario && stats.diario[dateStr] && Object.keys(stats.diario[dateStr]).length > 0);
     }
 
     const today = new Date();
@@ -2744,7 +2763,7 @@
 
         const dateStr = formatDateString(thisDate);
         btn.setAttribute('data-date', dateStr);
-        if (temEventosNaData(dateStr)) btn.classList.add('has-workout');
+        if (temTreinoConcluidoNaData(dateStr)) btn.classList.add('has-workout');
 
         if (!btn.classList.contains('disabled')) {
           btn.addEventListener('click', () => handleDayClick(thisDate));
@@ -3039,7 +3058,7 @@
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
         <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
       </div>
-      <div class="form-group"><label>Vídeo/GIF</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou da imagem GIF (.gif)"></div>
+      <div class="form-group" id="containerInputVideoLink"><label>Vídeo/GIF</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou da imagem GIF (.gif)"></div>
       <button class="save-btn" id="saveBtn">Salvar Alterações</button>
       <button class="btn-modal btn-modal-delete" id="deleteExerciseBtn" style="margin-top: 12px; width: 100%; display: none;">Remover Exercício</button>
     </div>
@@ -3075,20 +3094,20 @@
 
     // Tríceps
     { id: "triceps-pulley", name: "Tríceps Pulley", variation: "(barra reta ou W)", series: 3, reps: 12, weight: "0", rest: 90, image: "triceps-pulley.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "triceps-corda", name: "Tríceps Corda", variation: "(polia)", series: 3, reps: 12, weight: "0", rest: 90, image: "triceps-corda.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "triceps-testa", name: "Tríceps Testa", variation: "(barra ou halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "triceps-testa.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-corda", name: "Tríceps Corda", variation: "(polia)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/9cdf5978-8b90-47f5-8659-19724692a1bc.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-testa", name: "Tríceps Testa", variation: "(barra ou halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/1faefeaf-6fde-4f64-abe8-27516192b028.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
     { id: "mergulho-banco", name: "Mergulho no Banco", variation: "", series: 3, reps: 12, weight: "0", rest: 90, image: "mergulho-banco.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
     { id: "triceps-extensao", name: "Tríceps Extensão", variation: "(sentado ou em pé)", series: 3, reps: 12, weight: "0", rest: 90, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
     { id: "press-triceps-maquina", name: "Press Tríceps", variation: "(máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
 
     // Bíceps
-    { id: "rosca-direta-barra", name: "Rosca Direta", variation: "(barra W ou reta)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-direta-barra.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-direta-barra", name: "Rosca Direta", variation: "(barra W ou reta)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/96b0ecaf-d2f3-41ba-adbc-122679f8ffae.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
     { id: "rosca-alternada", name: "Rosca Alternada", variation: "com Halteres", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-alternada.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
     { id: "rosca-martelo-halteres", name: "Rosca Martelo", variation: "(halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-martelo-halteres.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
     { id: "rosca-martelo-corda", name: "Rosca Martelo", variation: "(corda)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-martelo-corda.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-scott", name: "Rosca Scott", variation: "(barra ou máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-scott.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-inclinada", name: "Rosca Inclinada", variation: "com Halteres (Banco 45°)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-inclinada.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-inversa", name: "Rosca Inversa", variation: "(barra ou polia)", series: 3, reps: 12, weight: "0", rest: 90, image: "rosca-inversa.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-scott", name: "Rosca Scott", variation: "(barra ou máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/69deffae-b5c5-4462-9f56-fde817c2a6b4.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-inclinada", name: "Rosca Inclinada", variation: "com Halteres (Banco 45°)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/e0b23b15-556b-497e-ab72-f05022bae469.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-inversa", name: "Rosca Inversa", variation: "(barra ou polia)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/900bfd79-5bee-4bd7-9c5e-e46249ee7895.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
 
     // Costa
     { id: "puxada-alta-costa", name: "Puxada Alta", variation: "(barra)", series: 3, reps: 12, weight: "0", rest: 90, image: "puxada-alta-costa.gif", isFavorite: false, completedToday: false, muscle: "costa" },
@@ -3098,15 +3117,15 @@
     { id: "puxada-articulada", name: "Puxada Articulada", variation: "(máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "puxada-articulada.gif", isFavorite: false, completedToday: false, muscle: "costa" },
     { id: "graviton", name: "Graviton", variation: "(máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "graviton.gif", isFavorite: false, completedToday: false, muscle: "costa" },
     { id: "remada-unilateral", name: "Remada Unilateral", variation: "(maquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "remada-unilateral.gif", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "pulldown-corda", name: "Pulldown", variation: "(corda na polia alta)", series: 3, reps: 12, weight: "0", rest: 90, image: "pulldown-corda.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "pulldown-corda", name: "Pulldown", variation: "(corda na polia alta)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/3b4143c3-66cd-4626-b829-ad7fdf0a910b.gif", isFavorite: false, completedToday: false, muscle: "costa" },
 
     // Ombro
     { id: "desenvolvimento-halteres", name: "Desenvolvimento", variation: "(halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "elevacao.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
     { id: "elevacao-lateral-ombro", name: "Elevação Lateral", variation: "(halteres ou cabo)", series: 3, reps: 12, weight: "0", rest: 90, image: "elevacao-lateral-ombro.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
     { id: "elevacao-frontal", name: "Elevação Frontal", variation: "(halteres, barra ou cabo)", series: 3, reps: 12, weight: "0", rest: 90, image: "elevacao-frontal.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "desenvolvimento-maquina", name: "Desenvolvimento", variation: "(máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "desenvolvimento-maquina.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "desenvolvimento-maquina", name: "Desenvolvimento", variation: "(máquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/6eb8c753-1abd-4094-a84c-f6fffb7f1d43.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
     { id: "elevacao-lateral-inclinada", name: "Elevação Lateral Inclinada", variation: "(banco 45° )", series: 3, reps: 12, weight: "0", rest: 90, image: "elevacao-lateral-inclinada.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "remada-alta-aberta", name: "Remada Alta", variation: "(pegada aberta)", series: 3, reps: 12, weight: "0", rest: 90, image: "remada-alta-aberta.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "remada-alta-aberta", name: "Remada Alta", variation: "(pegada aberta)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/5c511145-191e-410a-8aa6-3cd179759b23.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
     { id: "encolhimento-ombros", name: "Encolhimento de Ombros", variation: "", series: 3, reps: 12, weight: "0", rest: 90, image: "encolhimento-ombros.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
 
     // Perna/Glúteo
@@ -3118,9 +3137,9 @@
     { id: "afundo-passada", name: "Afundo / Passada", variation: "(halteres ou barra)", series: 3, reps: 12, weight: "0", rest: 90, image: "afundo-passada.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
     { id: "agachamento-sumo", name: "Agachamento Sumô", variation: "(maquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "agachamento-sumo.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
     { id: "elevacao-pelvica-barra", name: "Elevacao Pelvica-barra", variation: "(cabo)", series: 3, reps: 12, weight: "0", rest: 90, image: "elevacao-pelvica-barra.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "cadeira-flexora", name: "Cadeira Flexora", variation: "(maquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "cadeira-flexora.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "cadeira-flexora", name: "Cadeira Flexora", variation: "(maquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/9ebd7c9d-d989-48ee-a3c0-cd141a837803.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
     { id: "gluteo-polia", name: "Glúteo na Polia", variation: "(cabo)", series: 3, reps: 12, weight: "0", rest: 90, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "stiff", name: "Stiff", variation: "(barra)", series: 3, reps: 12, weight: "0", rest: 90, image: "stiff.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "stiff", name: "Stiff", variation: "(barra)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/4d80283b-8b34-4075-810d-6e5665e58b1d.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
     { id: "hack-45", name: "Hack 45°", variation: "(maquina)", series: 3, reps: 12, weight: "0", rest: 90, image: "hack-45.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
     { id: "gemeos-sentado", name: "Gêmeos Sentado", variation: "(panturrilha)", series: 3, reps: 12, weight: "0", rest: 90, image: "gemeos-sentado.gif", isFavorite: false, completedToday: false, muscle: "pernas" }
   ];
@@ -3413,7 +3432,7 @@
   const exName = document.getElementById('exName'); const exImageWrapper = document.getElementById('exImageWrapper'); const exRepsText = document.getElementById('exRepsText'); const tagWeightDisplay = document.getElementById('tagWeightDisplay'); const contentHistoricoIndividual = document.getElementById('contentHistoricoIndividual');
   const openSettings = document.getElementById('openSettings'); const closeSettings = document.getElementById('closeSettings'); const modalOverlay = document.getElementById('modalOverlay'); const saveBtn = document.getElementById('saveBtn'); const deleteExerciseBtn = document.getElementById('deleteExerciseBtn');
   const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputVideoLink = document.getElementById('inputVideoLink');
-  const containerInputName = document.getElementById('containerInputName'); const containerInputVariation = document.getElementById('containerInputVariation');
+  const containerInputName = document.getElementById('containerInputName'); const containerInputVariation = document.getElementById('containerInputVariation'); const containerInputVideoLink = document.getElementById('containerInputVideoLink');
   const tabPeso = document.getElementById('tabPeso'); const tabHistoricoIndividual = document.getElementById('tabHistórico');
   const contentPeso = document.getElementById('contentPeso'); const contentHistoricoIndividualArea = document.getElementById('contentHistórico');
 
@@ -3541,10 +3560,12 @@
     if (ex.id.startsWith('ex-')) {
       containerInputName.style.display = "flex";
       containerInputVariation.style.display = "flex";
+      containerInputVideoLink.style.display = "flex";
       deleteExerciseBtn.style.display = "block";
     } else {
       containerInputName.style.display = "none";
       containerInputVariation.style.display = "none";
+      containerInputVideoLink.style.display = "none";
       deleteExerciseBtn.style.display = "none";
     }
     modalOverlay.classList.add('active'); 
@@ -3563,6 +3584,7 @@
     document.getElementById('modalTitle').textContent = "Novo Exercício";
     containerInputName.style.display = "flex";
     containerInputVariation.style.display = "flex";
+    containerInputVideoLink.style.display = "flex";
     deleteExerciseBtn.style.display = "none"; 
     modalOverlay.classList.add('active'); 
   });
