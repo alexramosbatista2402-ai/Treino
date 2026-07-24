@@ -2992,7 +2992,7 @@
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
         <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
       </div>
-      <div class="form-group"><label>Vídeo</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou do vídeo (.mp4)"></div>
+      <div class="form-group"><label>Vídeo/GIF</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou da imagem GIF (.gif)"></div>
       <button class="save-btn" id="saveBtn">Salvar Alterações</button>
       <button class="btn-modal btn-modal-delete" id="deleteExerciseBtn" style="margin-top: 12px; width: 100%; display: none;">Remover Exercício</button>
     </div>
@@ -3012,68 +3012,68 @@
 
   const DEFAULT_EXERCISES = [
     // Peito
-    { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "https://youtu.be/M3aqh6homCg?is=SUzrVFqq2gWewrx5", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 10, weight: "30", rest: 60, image: "supino-maquina.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 4, reps: 10, weight: "16", rest: 60, image: "supino-reto-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-inclinado-halteres", name: "Supino Inclinado", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "supino-inclinado-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-declinado", name: "Supino Declinado", variation: "(barra ou halteres)", series: 3, reps: 10, weight: "15", rest: 60, image: "supino-declinado.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "crucifixo-reto-halteres", name: "Crucifixo Reto", variation: "com Halteres", series: 3, reps: 12, weight: "10", rest: 60, image: "crucifixo-reto-halteres.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "crossover-alta", name: "Crossover na Polia", variation: "(alta)", series: 3, reps: 12, weight: "15", rest: 60, image: "crossover-alta.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "crossover-baixa", name: "Crossover na Polia", variation: "(baixa)", series: 3, reps: 12, weight: "10", rest: 60, image: "crossover-baixa.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "pullover", name: "Pulloover", variation: "(halter)", series: 3, reps: 15, weight: "0", rest: 60, image: "pullover.mp4", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-reto-barra", name: "Supino Reto", variation: "(barra)", series: 4, reps: 10, weight: "20", rest: 60, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/e0b23b15-556b-497e-ab72-f05022bae469.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 4, reps: 10, weight: "15", rest: 60, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/e0b23b15-556b-497e-ab72-f05022bae469.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "40", rest: 60, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/e0b23b15-556b-497e-ab72-f05022bae469.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 10, weight: "30", rest: 60, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/e0b23b15-556b-497e-ab72-f05022bae469.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 4, reps: 10, weight: "16", rest: 60, image: "supino-reto-halteres.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-inclinado-halteres", name: "Supino Inclinado", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "supino-inclinado-halteres.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-declinado", name: "Supino Declinado", variation: "(barra ou halteres)", series: 3, reps: 10, weight: "15", rest: 60, image: "supino-declinado.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "crucifixo-reto-halteres", name: "Crucifixo Reto", variation: "com Halteres", series: 3, reps: 12, weight: "10", rest: 60, image: "crucifixo-reto-halteres.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "crossover-alta", name: "Crossover na Polia", variation: "(alta)", series: 3, reps: 12, weight: "15", rest: 60, image: "crossover-alta.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "crossover-baixa", name: "Crossover na Polia", variation: "(baixa)", series: 3, reps: 12, weight: "10", rest: 60, image: "crossover-baixa.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "pullover", name: "Pulloover", variation: "(halter)", series: 3, reps: 15, weight: "0", rest: 60, image: "pullover.gif", isFavorite: false, completedToday: false, muscle: "peito" },
 
     // Tríceps
-    { id: "triceps-pulley", name: "Tríceps Pulley", variation: "(barra reta ou W)", series: 4, reps: 10, weight: "25", rest: 60, image: "triceps-pulley.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "triceps-corda", name: "Tríceps Corda", variation: "(polia)", series: 3, reps: 12, weight: "20", rest: 45, image: "triceps-corda.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "triceps-testa", name: "Tríceps Testa", variation: "(barra ou halteres)", series: 3, reps: 10, weight: "10", rest: 60, image: "triceps-testa.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "mergulho-banco", name: "Mergulho no Banco", variation: "", series: 3, reps: 12, weight: "0", rest: 45, image: "mergulho-banco.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "triceps-extensao", name: "Tríceps Extensão", variation: "(sentado ou em pé)", series: 3, reps: 10, weight: "14", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
-    { id: "press-triceps-maquina", name: "Press Tríceps", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-pulley", name: "Tríceps Pulley", variation: "(barra reta ou W)", series: 4, reps: 10, weight: "25", rest: 60, image: "triceps-pulley.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-corda", name: "Tríceps Corda", variation: "(polia)", series: 3, reps: 12, weight: "20", rest: 45, image: "triceps-corda.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-testa", name: "Tríceps Testa", variation: "(barra ou halteres)", series: 3, reps: 10, weight: "10", rest: 60, image: "triceps-testa.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "mergulho-banco", name: "Mergulho no Banco", variation: "", series: 3, reps: 12, weight: "0", rest: 45, image: "mergulho-banco.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "triceps-extensao", name: "Tríceps Extensão", variation: "(sentado ou em pé)", series: 3, reps: 10, weight: "14", rest: 60, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
+    { id: "press-triceps-maquina", name: "Press Tríceps", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "tríceps" },
 
     // Bíceps
-    { id: "rosca-direta-barra", name: "Rosca Direta", variation: "(barra W ou reta)", series: 4, reps: 10, weight: "12", rest: 60, image: "rosca-direta-barra.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-alternada", name: "Rosca Alternada", variation: "com Halteres", series: 3, reps: 10, weight: "12", rest: 60, image: "rosca-alternada.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-martelo-halteres", name: "Rosca Martelo", variation: "(halteres)", series: 3, reps: 12, weight: "12", rest: 45, image: "rosca-martelo-halteres.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-martelo-corda", name: "Rosca Martelo", variation: "(corda)", series: 3, reps: 12, weight: "20", rest: 45, image: "rosca-martelo-corda.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-scott", name: "Rosca Scott", variation: "(barra ou máquina)", series: 4, reps: 10, weight: "15", rest: 60, image: "rosca-scott.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-inclinada", name: "Rosca Inclinada", variation: "com Halteres (Banco 45°)", series: 3, reps: 10, weight: "10", rest: 60, image: "rosca-inclinada.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
-    { id: "rosca-inversa", name: "Rosca Inversa", variation: "(barra ou polia)", series: 3, reps: 12, weight: "15", rest: 45, image: "rosca-inversa.mp4", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-direta-barra", name: "Rosca Direta", variation: "(barra W ou reta)", series: 4, reps: 10, weight: "12", rest: 60, image: "rosca-direta-barra.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-alternada", name: "Rosca Alternada", variation: "com Halteres", series: 3, reps: 10, weight: "12", rest: 60, image: "rosca-alternada.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-martelo-halteres", name: "Rosca Martelo", variation: "(halteres)", series: 3, reps: 12, weight: "12", rest: 45, image: "rosca-martelo-halteres.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-martelo-corda", name: "Rosca Martelo", variation: "(corda)", series: 3, reps: 12, weight: "20", rest: 45, image: "rosca-martelo-corda.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-scott", name: "Rosca Scott", variation: "(barra ou máquina)", series: 4, reps: 10, weight: "15", rest: 60, image: "rosca-scott.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-inclinada", name: "Rosca Inclinada", variation: "com Halteres (Banco 45°)", series: 3, reps: 10, weight: "10", rest: 60, image: "rosca-inclinada.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
+    { id: "rosca-inversa", name: "Rosca Inversa", variation: "(barra ou polia)", series: 3, reps: 12, weight: "15", rest: 45, image: "rosca-inversa.gif", isFavorite: false, completedToday: false, muscle: "bíceps" },
 
     // Costa
-    { id: "puxada-alta-costa", name: "Puxada Alta", variation: "(barra)", series: 4, reps: 10, weight: "45", rest: 60, image: "puxada-alta-costa.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "crucifixo-invertido-maquina", name: "Crucifixo Invertido", variation: "(máquina)", series: 3, reps: 12, weight: "30", rest: 45, image: "crucifixo-invertido-maquina.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "puxada-alta-triangulo", name: "Puxada Alta", variation: "(triângulo)", series: 4, reps: 10, weight: "45", rest: 60, image: "puxada-alta-triangulo.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "remada-baixa", name: "Remada Baixa", variation: "(polia)", series: 4, reps: 10, weight: "40", rest: 60, image: "remada-baixa.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "puxada-articulada", name: "Puxada Articulada", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "puxada-articulada.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "graviton", name: "Graviton", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "graviton.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "remada-unilateral", name: "Remada Unilateral", variation: "(maquina)", series: 3, reps: 12, weight: "18", rest: 45, image: "remada-unilateral.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
-    { id: "pulldown-corda", name: "Pulldown", variation: "(corda na polia alta)", series: 3, reps: 12, weight: "20", rest: 45, image: "pulldown-corda.mp4", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "puxada-alta-costa", name: "Puxada Alta", variation: "(barra)", series: 4, reps: 10, weight: "45", rest: 60, image: "puxada-alta-costa.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "crucifixo-invertido-maquina", name: "Crucifixo Invertido", variation: "(máquina)", series: 3, reps: 12, weight: "30", rest: 45, image: "crucifixo-invertido-maquina.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "puxada-alta-triangulo", name: "Puxada Alta", variation: "(triângulo)", series: 4, reps: 10, weight: "45", rest: 60, image: "puxada-alta-triangulo.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "remada-baixa", name: "Remada Baixa", variation: "(polia)", series: 4, reps: 10, weight: "40", rest: 60, image: "remada-baixa.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "puxada-articulada", name: "Puxada Articulada", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "puxada-articulada.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "graviton", name: "Graviton", variation: "(máquina)", series: 3, reps: 10, weight: "35", rest: 60, image: "graviton.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "remada-unilateral", name: "Remada Unilateral", variation: "(maquina)", series: 3, reps: 12, weight: "18", rest: 45, image: "remada-unilateral.gif", isFavorite: false, completedToday: false, muscle: "costa" },
+    { id: "pulldown-corda", name: "Pulldown", variation: "(corda na polia alta)", series: 3, reps: 12, weight: "20", rest: 45, image: "pulldown-corda.gif", isFavorite: false, completedToday: false, muscle: "costa" },
 
     // Ombro
-    { id: "desenvolvimento-halteres", name: "Desenvolvimento", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "elevacao.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "elevacao-lateral-ombro", name: "Elevação Lateral", variation: "(halteres ou cabo)", series: 4, reps: 12, weight: "10", rest: 45, image: "elevacao-lateral-ombro.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "elevacao-frontal", name: "Elevação Frontal", variation: "(halteres, barra ou cabo)", series: 3, reps: 10, weight: "10", rest: 60, image: "elevacao-frontal.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "desenvolvimento-maquina", name: "Desenvolvimento", variation: "(máquina)", series: 3, reps: 10, weight: "25", rest: 60, image: "desenvolvimento-maquina.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "elevacao-lateral-inclinada", name: "Elevação Lateral Inclinada", variation: "(banco 45° )", series: 3, reps: 12, weight: "8", rest: 45, image: "elevacao-lateral-inclinada.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "remada-alta-aberta", name: "Remada Alta", variation: "(pegada aberta)", series: 3, reps: 10, weight: "15", rest: 60, image: "remada-alta-aberta.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
-    { id: "encolhimento-ombros", name: "Encolhimento de Ombros", variation: "", series: 4, reps: 12, weight: "24", rest: 45, image: "encolhimento-ombros.mp4", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "desenvolvimento-halteres", name: "Desenvolvimento", variation: "(halteres)", series: 4, reps: 10, weight: "14", rest: 60, image: "elevacao.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "elevacao-lateral-ombro", name: "Elevação Lateral", variation: "(halteres ou cabo)", series: 4, reps: 12, weight: "10", rest: 45, image: "elevacao-lateral-ombro.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "elevacao-frontal", name: "Elevação Frontal", variation: "(halteres, barra ou cabo)", series: 3, reps: 10, weight: "10", rest: 60, image: "elevacao-frontal.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "desenvolvimento-maquina", name: "Desenvolvimento", variation: "(máquina)", series: 3, reps: 10, weight: "25", rest: 60, image: "desenvolvimento-maquina.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "elevacao-lateral-inclinada", name: "Elevação Lateral Inclinada", variation: "(banco 45° )", series: 3, reps: 12, weight: "8", rest: 45, image: "elevacao-lateral-inclinada.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "remada-alta-aberta", name: "Remada Alta", variation: "(pegada aberta)", series: 3, reps: 10, weight: "15", rest: 60, image: "remada-alta-aberta.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
+    { id: "encolhimento-ombros", name: "Encolhimento de Ombros", variation: "", series: 4, reps: 12, weight: "24", rest: 45, image: "encolhimento-ombros.gif", isFavorite: false, completedToday: false, muscle: "ombro" },
 
     // Perna/Glúteo
-    { id: "agachamento-livre", name: "Agachamento Livre", variation: "(barra ou halteres)", series: 4, reps: 8, weight: "40", rest: 90, image: "agachamento-livre.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "leg-press-45", name: "Leg Press 45°", variation: "", series: 4, reps: 10, weight: "120", rest: 90, image: "leg-press-45.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "cadeira-extensora", name: "Cadeira Extensora", variation: "", series: 3, reps: 12, weight: "45", rest: 45, image: "cadeira-extensora.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "cadeira-adutora", name: "Cadeira Abdutora", variation: "", series: 3, reps: 15, weight: "40", rest: 45, image: "cadeira-adutora.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "mesa-flexora", name: "Mesa Flexora", variation: "(ou cadeira flexora)", series: 3, reps: 12, weight: "35", rest: 45, image: "mesa-flexora.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "afundo-passada", name: "Afundo / Passada", variation: "(halteres ou barra)", series: 3, reps: 10, weight: "12", rest: 60, image: "afundo-passada.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "agachamento-sumo", name: "Agachamento Sumô", variation: "(maquina)", series: 3, reps: 12, weight: "20", rest: 45, image: "agachamento-sumo.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "elevacao-pelvica-barra", name: "Elevacao Pelvica-barra", variation: "(cabo)", series: 3, reps: 12, weight: "20", rest: 45, image: "elevacao-pelvica-barra.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "cadeira-flexora", name: "Cadeira Flexora", variation: "(maquina)", series: 3, reps: 12, weight: "20", rest: 45, image: "cadeira-flexora.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "gluteo-polia", name: "Glúteo na Polia", variation: "(cabo)", series: 3, reps: 12, weight: "20", rest: 45, image: "peck-deck.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "stiff", name: "Stiff", variation: "(barra)", series: 3, reps: 12, weight: "20", rest: 45, image: "stiff.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "hack-45", name: "Hack 45°", variation: "(maquina)", series: 4, reps: 15, weight: "40", rest: 45, image: "hack-45.mp4", isFavorite: false, completedToday: false, muscle: "pernas" },
-    { id: "gemeos-sentado", name: "Gêmeos Sentado", variation: "(panturrilha)", series: 4, reps: 15, weight: "30", rest: 45, image: "gemeos-sentado.mp4", isFavorite: false, completedToday: false, muscle: "pernas" }
+    { id: "agachamento-livre", name: "Agachamento Livre", variation: "(barra ou halteres)", series: 4, reps: 8, weight: "40", rest: 90, image: "agachamento-livre.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "leg-press-45", name: "Leg Press 45°", variation: "", series: 4, reps: 10, weight: "120", rest: 90, image: "leg-press-45.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "cadeira-extensora", name: "Cadeira Extensora", variation: "", series: 3, reps: 12, weight: "45", rest: 45, image: "cadeira-extensora.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "cadeira-adutora", name: "Cadeira Abdutora", variation: "", series: 3, reps: 15, weight: "40", rest: 45, image: "cadeira-adutora.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "mesa-flexora", name: "Mesa Flexora", variation: "(ou cadeira flexora)", series: 3, reps: 12, weight: "35", rest: 45, image: "mesa-flexora.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "afundo-passada", name: "Afundo / Passada", variation: "(halteres ou barra)", series: 3, reps: 10, weight: "12", rest: 60, image: "afundo-passada.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "agachamento-sumo", name: "Agachamento Sumô", variation: "(maquina)", series: 3, reps: 12, weight: "20", rest: 45, image: "agachamento-sumo.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "elevacao-pelvica-barra", name: "Elevacao Pelvica-barra", variation: "(cabo)", series: 3, reps: 12, weight: "20", rest: 45, image: "elevacao-pelvica-barra.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "cadeira-flexora", name: "Cadeira Flexora", variation: "(maquina)", series: 3, reps: 12, weight: "20", rest: 45, image: "cadeira-flexora.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "gluteo-polia", name: "Glúteo na Polia", variation: "(cabo)", series: 3, reps: 12, weight: "20", rest: 45, image: "peck-deck.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "stiff", name: "Stiff", variation: "(barra)", series: 3, reps: 12, weight: "20", rest: 45, image: "stiff.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "hack-45", name: "Hack 45°", variation: "(maquina)", series: 4, reps: 15, weight: "40", rest: 45, image: "hack-45.gif", isFavorite: false, completedToday: false, muscle: "pernas" },
+    { id: "gemeos-sentado", name: "Gêmeos Sentado", variation: "(panturrilha)", series: 4, reps: 15, weight: "30", rest: 45, image: "gemeos-sentado.gif", isFavorite: false, completedToday: false, muscle: "pernas" }
   ];
 
   if (localStorage.getItem('workout_db_version') !== DATABASE_VERSION) {
@@ -3212,7 +3212,7 @@
       </div>
       <div class="muscle-right-side">
         <div class="muscle-graphic">
-          <img src="peck-deck.mp4" alt="${name}">
+          <img src="peck-deck.gif" alt="${name}">
         </div>
       </div>
     `;
@@ -3235,9 +3235,9 @@
     return match ? match[1] : null;
   }
 
-  function isDirectVideoLink(url) {
+  function isDirectGifLink(url) {
     if (!url) return false;
-    return /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(String(url).trim());
+    return /\.(gif)(\?.*)?$/i.test(String(url).trim());
   }
 
   function renderExercises() {
@@ -3255,8 +3255,8 @@
       const ytId = getYouTubeId(ex.image);
       if (ytId) {
         mediaHtml = `<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg">`;
-      } else if (isDirectVideoLink(ex.image)) {
-        mediaHtml = `<video src="${ex.image}" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video>`;
+      } else if (isDirectGifLink(ex.image)) {
+        mediaHtml = `<img src="${ex.image}" alt="${ex.name}">`;
       } else {
         mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
       }
@@ -3365,8 +3365,8 @@
     const ytId = getYouTubeId(ex.image);
     if (ytId) {
       exImageWrapper.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&playsinline=1&modestbranding=1" title="${ex.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    } else if (isDirectVideoLink(ex.image)) {
-      exImageWrapper.innerHTML = `<video src="${ex.image}" autoplay loop muted playsinline disablePictureInPicture disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback"></video>`;
+    } else if (isDirectGifLink(ex.image)) {
+      exImageWrapper.innerHTML = `<img src="${ex.image}" alt="${ex.name}">`;
     } else {
       exImageWrapper.innerHTML = `<svg class="illustration" viewBox="0 0 100 100" fill="none" style="width:auto;height:60%;opacity:0.85;"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
     }
