@@ -3007,6 +3007,8 @@
   function iniciarLogicaTelaExercicios() {
 
   let activeMuscleGroup = "peito"; 
+  let gifLoopIntervals = []; // guarda os intervalos que reiniciam os GIFs do grid
+  let exDetailGifInterval = null; // guarda o intervalo do GIF da tela de detalhe
 
   const DATABASE_VERSION = "v19_youtube_video";
 
@@ -3240,7 +3242,23 @@
     return /\.(gif)(\?.*)?$/i.test(String(url).trim());
   }
 
+  // Muitos GIFs são exportados para tocar uma única vez (loop count = 1).
+  // Como o HTML não permite forçar o loop de um GIF via atributo, recriamos
+  // a mesma imagem (a partir do cache do navegador, sem gastar dados extras)
+  // em intervalos regulares para simular um loop infinito.
+  function ativarLoopInfinitoGif(imgEl, intervaloMs = 3000) {
+    if (!imgEl) return null;
+    return setInterval(() => {
+      const srcAtual = imgEl.src;
+      if (!srcAtual) return;
+      imgEl.src = '';
+      imgEl.src = srcAtual;
+    }, intervaloMs);
+  }
+
   function renderExercises() {
+    gifLoopIntervals.forEach(id => clearInterval(id));
+    gifLoopIntervals = [];
     exercisesGrid.innerHTML = "";
     const filtered = workoutDatabase.filter(item => item.muscle === activeMuscleGroup);
     if (filtered.length === 0) {
@@ -3256,7 +3274,7 @@
       if (ytId) {
         mediaHtml = `<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg">`;
       } else if (isDirectGifLink(ex.image)) {
-        mediaHtml = `<img src="${ex.image}" alt="${ex.name}">`;
+        mediaHtml = `<img class="gif-media" src="${ex.image}" alt="${ex.name}">`;
       } else {
         mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
       }
@@ -3276,6 +3294,11 @@
           <span class="exercise-variation">${ex.variation || ''}</span>
         </div>`;
       exercisesGrid.appendChild(card);
+      if (isDirectGifLink(ex.image)) {
+        const gifEl = card.querySelector('.card-media img.gif-media');
+        const intervalId = ativarLoopInfinitoGif(gifEl);
+        if (intervalId) gifLoopIntervals.push(intervalId);
+      }
     });
     applyFilters();
   }
@@ -3361,12 +3384,15 @@
 
   function loadExerciseToDetail(id) {
     const ex = workoutDatabase.find(i => i.id === id); if (!ex) return;
+    if (exDetailGifInterval) { clearInterval(exDetailGifInterval); exDetailGifInterval = null; }
     exName.textContent = ex.name + " " + (ex.variation || "");
     const ytId = getYouTubeId(ex.image);
     if (ytId) {
       exImageWrapper.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&playsinline=1&modestbranding=1" title="${ex.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
     } else if (isDirectGifLink(ex.image)) {
-      exImageWrapper.innerHTML = `<img src="${ex.image}" alt="${ex.name}">`;
+      exImageWrapper.innerHTML = `<img class="gif-media" src="${ex.image}" alt="${ex.name}">`;
+      const gifEl = exImageWrapper.querySelector('img.gif-media');
+      exDetailGifInterval = ativarLoopInfinitoGif(gifEl);
     } else {
       exImageWrapper.innerHTML = `<svg class="illustration" viewBox="0 0 100 100" fill="none" style="width:auto;height:60%;opacity:0.85;"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
     }
