@@ -2103,6 +2103,55 @@
     });
   }
 
+  /* ============================================================ */
+  /* ============ PERSISTÊNCIA DOS DADOS DO PERFIL =============== */
+  /* ============================================================ */
+  /* Guarda tudo que é preenchido na tela de Perfil (dados         */
+  /* pessoais, peso, medidas e fotos) para que continue disponível */
+  /* ao sair e voltar para a aba, ou ao fechar e reabrir o app.    */
+
+  const PROFILE_STORAGE_KEY = 'app_profile_data';
+
+  function getProfileData() {
+    const defaults = {
+      nome: null,
+      nascimento: null,
+      altura: null,
+      meta: null,
+      nivel: null,
+      membroDesde: null,
+      pesoAtual: null,
+      pesoFoco: null,
+      mesInicialIndex: null,
+      mesFinalIndex: null,
+      dataMetaSalvaFormatada: null,
+      registrosPesosHistorico: {},
+      historicoDeMedidasRegistradas: [],
+      fotos: {}
+    };
+    try {
+      const salvo = JSON.parse(localStorage.getItem(PROFILE_STORAGE_KEY));
+      if (!salvo) return defaults;
+      return Object.assign({}, defaults, salvo, {
+        registrosPesosHistorico: salvo.registrosPesosHistorico || {},
+        historicoDeMedidasRegistradas: Array.isArray(salvo.historicoDeMedidasRegistradas) ? salvo.historicoDeMedidasRegistradas : [],
+        fotos: salvo.fotos || {}
+      });
+    } catch (e) {
+      return defaults;
+    }
+  }
+
+  function saveProfileData(data) {
+    try {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error('Não foi possível salvar os dados do perfil (armazenamento cheio?)', e);
+      return false;
+    }
+  }
+
   function mudarAba(elemento, nomeAba) {
     const itens = document.querySelectorAll('.nav-item');
     itens.forEach(item => item.classList.remove('active'));
@@ -5658,22 +5707,30 @@
   const resetConfirmModal = document.getElementById('reset-confirm-modal');
 
   let dataMudancaAtual = null;
-  let membroDesdeDefinido = false;
 
-  let mesInicialIndex = null;  
-  let mesFinalIndex = null;    
+  let profileData = getProfileData();
+
+  let mesInicialIndex = profileData.mesInicialIndex;  
+  let mesFinalIndex = profileData.mesFinalIndex;    
   const nomesMesesAbreviados = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   
-  let valorPesoAtualSalvo = null;
-  let valorPesoFocoSalvo = null;
-  let registrosPesosHistorico = {}; 
-  let dataMetaSalvaFormatada = null; 
+  let valorPesoAtualSalvo = profileData.pesoAtual;
+  let valorPesoFocoSalvo = profileData.pesoFoco;
+  let registrosPesosHistorico = profileData.registrosPesosHistorico || {}; 
+  let dataMetaSalvaFormatada = profileData.dataMetaSalvaFormatada; 
 
-  let historicoDeMedidasRegistradas = []; 
-  let indiceDoRegistroAtualVisualizado = -1; 
+  let historicoDeMedidasRegistradas = profileData.historicoDeMedidasRegistradas || []; 
+  let indiceDoRegistroAtualVisualizado = historicoDeMedidasRegistradas.length - 1; 
 
   // Abre/fecha Modais padrão
-  openProfileModalBtn.addEventListener('click', () => profileModal.classList.add('open'));
+  openProfileModalBtn.addEventListener('click', () => {
+    document.getElementById('input-name').value = profileData.nome || '';
+    document.getElementById('input-birth').value = profileData.nascimento || '';
+    document.getElementById('input-height').value = profileData.altura || '';
+    document.getElementById('input-level').value = profileData.nivel || '';
+    document.getElementById('input-goal').value = profileData.meta || '';
+    profileModal.classList.add('open');
+  });
   closeProfileModalBtn.addEventListener('click', () => profileModal.classList.remove('open'));
 
   // Modal de Configurações
@@ -5689,6 +5746,7 @@
 
   confirmResetBtn.addEventListener('click', () => {
     localStorage.removeItem('app_achievement_stats');
+    localStorage.removeItem('app_profile_data');
     localStorage.removeItem('workout_db');
     localStorage.removeItem('workout_db_version');
     localStorage.removeItem('custom_muscles');
@@ -5751,16 +5809,25 @@
       const lblAfter = document.getElementById(`lbl-${type}-after`);
       const lblBefore = document.getElementById(`lbl-${type}-before`);
 
+      if (!profileData.fotos[type]) profileData.fotos[type] = { before: null, after: null };
+
       // 1. Se já existir uma imagem no campo "Foto Atual", move ela para "Foto Anterior"
       if (boxAfter.querySelector('img')) {
         boxBefore.innerHTML = boxAfter.innerHTML;
         lblBefore.textContent = lblAfter.textContent;
+        profileData.fotos[type].before = profileData.fotos[type].after;
       }
 
       // 2. Carrega a nova imagem selecionada direto na "Foto Atual"
       const reader = new FileReader();
       reader.onload = function(e) {
-        boxAfter.innerHTML = `<img src="${e.target.result}" alt="Depois">`;
+        const src = e.target.result;
+        boxAfter.innerHTML = `<img src="${src}" alt="Depois">`;
+        profileData.fotos[type].after = { src: src, label: dataAtualSistema };
+        const salvouOk = saveProfileData(profileData);
+        if (!salvouOk) {
+          alert('Não foi possível salvar a foto: o armazenamento do navegador está cheio. Tente usar uma imagem menor.');
+        }
       };
       reader.readAsDataURL(fileAfter);
       lblAfter.textContent = dataAtualSistema;
@@ -5901,6 +5968,10 @@
       registrarPeso(novoPeso);
       recalcularGrafico();
       definirMembroDesde();
+      profileData.pesoAtual = novoPeso;
+      profileData.mesInicialIndex = mesInicialIndex;
+      profileData.registrosPesosHistorico = registrosPesosHistorico;
+      saveProfileData(profileData);
     }
     weightForm.reset();
     weightModal.classList.remove('open');
@@ -5924,6 +5995,11 @@
       if (mesInicialIndex === null) mesInicialIndex = new Date().getMonth();
       recalcularGrafico();
       definirMembroDesde();
+      profileData.pesoFoco = novoFoco;
+      profileData.mesFinalIndex = mesFinalIndex;
+      profileData.dataMetaSalvaFormatada = dataMetaSalvaFormatada;
+      profileData.mesInicialIndex = mesInicialIndex;
+      saveProfileData(profileData);
     }
     targetWeightForm.reset();
     targetWeightModal.classList.remove('open');
@@ -6012,17 +6088,20 @@
       }
       indiceDoRegistroAtualVisualizado = historicoDeMedidasRegistradas.length - 1;
       renderizarRegistroDeMedidas(indiceDoRegistroAtualVisualizado);
+      profileData.historicoDeMedidasRegistradas = historicoDeMedidasRegistradas;
+      saveProfileData(profileData);
     }
     definirMembroDesde();
     measuresModal.classList.remove('open');
   });
 
   function definirMembroDesde() {
-    if (!membroDesdeDefinido) {
+    if (!profileData.membroDesde) {
       const dataCadastro = new Date();
-      document.getElementById('display-member-since').textContent = `${nomesMesesAbreviados[dataCadastro.getMonth()]}/${dataCadastro.getFullYear()}`;
-      membroDesdeDefinido = true;
+      profileData.membroDesde = { mes: dataCadastro.getMonth(), ano: dataCadastro.getFullYear() };
+      saveProfileData(profileData);
     }
+    document.getElementById('display-member-since').textContent = `${nomesMesesAbreviados[profileData.membroDesde.mes]}/${profileData.membroDesde.ano}`;
   }
 
   profileForm.addEventListener('submit', (e) => {
@@ -6031,6 +6110,7 @@
     const novaAltura = document.getElementById('input-height').value;
     const novaMeta = document.getElementById('input-goal').value;
     const level = document.getElementById('input-level').value;
+    const novoNascimento = document.getElementById('input-birth').value;
 
     document.getElementById('display-name').textContent = novoNome;
     document.getElementById('display-height').textContent = parseFloat(novaAltura).toFixed(2).replace('.', ',') + ' m';
@@ -6044,9 +6124,79 @@
     else if (level === 'Intermediário') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot"></div>';
     else if (level === 'Avançado') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot active"></div>';
 
-    document.getElementById('display-age').textContent = (new Date().getFullYear() - new Date(document.getElementById('input-birth').value).getFullYear()) + ' anos';
+    document.getElementById('display-age').textContent = (new Date().getFullYear() - new Date(novoNascimento).getFullYear()) + ' anos';
     profileModal.classList.remove('open');
+
+    profileData.nome = novoNome;
+    profileData.nascimento = novoNascimento;
+    profileData.altura = novaAltura;
+    profileData.meta = novaMeta;
+    profileData.nivel = level;
+    saveProfileData(profileData);
   });
+
+  // Repõe na tela tudo o que já havia sido salvo anteriormente (dados
+  // pessoais, peso, meta, medidas e fotos), pois o container é recriado
+  // toda vez que o usuário troca de aba e volta para o Perfil.
+  function renderizarDadosPerfilSalvos() {
+    if (profileData.nome) document.getElementById('display-name').textContent = profileData.nome;
+    if (profileData.altura) document.getElementById('display-height').textContent = parseFloat(profileData.altura).toFixed(2).replace('.', ',') + ' m';
+    if (profileData.meta) document.getElementById('display-goal-main').textContent = profileData.meta;
+    if (profileData.nivel) {
+      document.getElementById('display-level').textContent = 'Nível: ' + profileData.nivel;
+      const dotsContainer = document.getElementById('display-level-dots');
+      if (profileData.nivel === 'Iniciante') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot"></div><div class="dot"></div>';
+      else if (profileData.nivel === 'Intermediário') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot"></div>';
+      else if (profileData.nivel === 'Avançado') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot active"></div>';
+    }
+    if (profileData.nascimento) {
+      document.getElementById('display-age').textContent = (new Date().getFullYear() - new Date(profileData.nascimento).getFullYear()) + ' anos';
+    }
+
+    if (profileData.pesoAtual !== null && profileData.pesoAtual !== undefined) {
+      document.getElementById('display-weight').textContent = profileData.pesoAtual.toFixed(1).replace('.', ',') + ' kg';
+    }
+    if (profileData.pesoFoco !== null && profileData.pesoFoco !== undefined) {
+      document.getElementById('display-target-weight').textContent = profileData.pesoFoco.toFixed(1).replace('.', ',') + ' kg';
+    }
+    if (profileData.dataMetaSalvaFormatada) {
+      document.getElementById('display-goal-date').textContent = `Até ${profileData.dataMetaSalvaFormatada}`;
+    }
+
+    if (profileData.membroDesde) {
+      document.getElementById('display-member-since').textContent = `${nomesMesesAbreviados[profileData.membroDesde.mes]}/${profileData.membroDesde.ano}`;
+    }
+
+    // Fotos de evolução salvas
+    Object.keys(profileData.fotos || {}).forEach(type => {
+      const entry = profileData.fotos[type];
+      if (!entry) return;
+      if (entry.before && entry.before.src) {
+        const box = document.getElementById(`pbox-${type}-before`);
+        const lbl = document.getElementById(`lbl-${type}-before`);
+        if (box) box.innerHTML = `<img src="${entry.before.src}" alt="Antes">`;
+        if (lbl) lbl.textContent = entry.before.label;
+      }
+      if (entry.after && entry.after.src) {
+        const box = document.getElementById(`pbox-${type}-after`);
+        const lbl = document.getElementById(`lbl-${type}-after`);
+        if (box) box.innerHTML = `<img src="${entry.after.src}" alt="Depois">`;
+        if (lbl) lbl.textContent = entry.after.label;
+      }
+    });
+
+    // Histórico de medidas salvo
+    if (historicoDeMedidasRegistradas.length > 0) {
+      renderizarRegistroDeMedidas(historicoDeMedidasRegistradas.length - 1);
+    }
+
+    // Gráfico de evolução do peso salvo
+    if (mesInicialIndex !== null) {
+      recalcularGrafico();
+    }
+  }
+
+  renderizarDadosPerfilSalvos();
   }
 
   // Carrega a tela Início automaticamente ao abrir o app pela primeira vez
