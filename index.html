@@ -883,6 +883,8 @@
 #tela-exercicios .filter-tag { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-secondary); padding: 6px 14px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
 #tela-exercicios .filter-tag.active { background: var(--amber-dim); border-color: rgba(255, 122, 61, 0.3); color: var(--amber); }
 #tela-exercicios .exercises-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#tela-exercicios .add-exercise-btn-bottom { width: 100%; margin-top: 12px; background: var(--amber-dim); color: var(--amber); border: 1px dashed rgba(255, 122, 61, 0.4); padding: 14px; border-radius: 14px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; }
+#tela-exercicios .add-exercise-btn-bottom:active { transform: scale(0.97); }
 #tela-exercicios #screenList .content { padding-left: 6px; padding-right: 6px; }
 #tela-exercicios .exercise-card { 
     background: var(--surface-card); 
@@ -2878,7 +2880,6 @@
             </button>
             <h1 id="workoutMuscleTitle">PEITO</h1>
           </div>
-          <button class="add-exercise-btn" id="addNewExerciseBtn">Adicionar Exercício</button>
         </div>
         <p class="subtitle">Selecione os exercícios</p>
       </header>
@@ -2890,6 +2891,10 @@
       </div>
 
       <div class="exercises-grid" id="exercisesGrid"></div>
+      <button class="add-exercise-btn-bottom" id="addNewExerciseBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>Adicionar Exercício</span>
+      </button>
       <div class="general-history-container" id="generalHistoryContainer"></div>
     </div>
   </div>
@@ -3124,6 +3129,8 @@
     btn.addEventListener('click', (e) => {
       if (e.target.closest('.muscle-manage-btn')) return;
       activeMuscleGroup = muscleId.toLowerCase();
+      currentFilter = 'all';
+      updateFilterButtons(filterAllBtn);
       changeScreen('treinos');
     });
   }
@@ -3278,6 +3285,7 @@
     const cards = exercisesGrid.querySelectorAll('.exercise-card');
     if (currentFilter === 'history') { 
       exercisesGrid.style.display = 'none'; 
+      addNewExerciseBtn.style.display = 'none';
       generalHistoryContainer.style.display = 'flex'; 
       
       const muscleHistory = historyDatabase[activeMuscleGroup] || [];
@@ -3298,7 +3306,7 @@
       }
     } 
     else {
-      exercisesGrid.style.display = 'grid'; generalHistoryContainer.style.display = 'none';
+      exercisesGrid.style.display = 'grid'; addNewExerciseBtn.style.display = 'flex'; generalHistoryContainer.style.display = 'none';
       cards.forEach(card => {
         const ex = workoutDatabase.find(i => i.id === card.getAttribute('data-id'));
         card.style.display = currentFilter === 'favs' ? ((ex && ex.isFavorite) ? 'flex' : 'none') : 'flex';
@@ -3335,6 +3343,18 @@
   const openSettings = document.getElementById('openSettings'); const closeSettings = document.getElementById('closeSettings'); const modalOverlay = document.getElementById('modalOverlay'); const saveBtn = document.getElementById('saveBtn'); const deleteExerciseBtn = document.getElementById('deleteExerciseBtn');
   const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputVideoLink = document.getElementById('inputVideoLink');
   const containerInputName = document.getElementById('containerInputName'); const containerInputVariation = document.getElementById('containerInputVariation');
+  const tabPeso = document.getElementById('tabPeso'); const tabHistoricoIndividual = document.getElementById('tabHistórico');
+  const contentPeso = document.getElementById('contentPeso'); const contentHistoricoIndividualArea = document.getElementById('contentHistórico');
+
+  tabPeso.addEventListener('click', () => {
+    tabPeso.classList.add('active'); tabHistoricoIndividual.classList.remove('active');
+    contentPeso.classList.remove('inactive'); contentHistoricoIndividualArea.classList.add('inactive');
+  });
+  tabHistoricoIndividual.addEventListener('click', () => {
+    tabHistoricoIndividual.classList.add('active'); tabPeso.classList.remove('active');
+    contentHistoricoIndividualArea.classList.remove('inactive'); contentPeso.classList.add('inactive');
+    renderIndividualExerciseHistory();
+  });
 
   let timerInterval = null; let defaultRestTime = 60; let timeRemaining = 60; let seriesFeitasCount = 0; let totalSeriesGoal = 3; let repsPerSeries = 10; let pesoKg = '20';
 
@@ -3357,7 +3377,29 @@
     exRepsText.textContent = repsPerSeries; tagWeightDisplay.textContent = pesoKg.includes('kg') ? pesoKg : `${pesoKg}kg`;
     exSeriesText.textContent = seriesFeitasCount >= totalSeriesGoal ? "Concluído!" : `${seriesFeitasCount} / ${totalSeriesGoal}`;
     seriesBtn.style.background = seriesFeitasCount >= totalSeriesGoal ? 'var(--amber)' : `conic-gradient(var(--amber) ${(seriesFeitasCount/totalSeriesGoal)*360}deg, rgba(255,255,255,0.1) 0deg)`;
-    contentHistoricoIndividual.innerHTML = `<div class="history-day-item"><span>Meta atual</span><span>${totalSeriesGoal}S - ${repsPerSeries}R @ ${pesoKg}kg</span></div>`;
+    renderIndividualExerciseHistory();
+  }
+
+  function renderIndividualExerciseHistory() {
+    const ex = workoutDatabase.find(i => i.id === activeExerciseId);
+    if (!ex) { contentHistoricoIndividual.innerHTML = ''; return; }
+    const exFullName = `${ex.name} ${ex.variation || ''}`.trim();
+    const muscleHistory = historyDatabase[ex.muscle] || [];
+    const matches = [];
+    muscleHistory.forEach(day => {
+      const found = (day.exercises || []).find(item => item.name === exFullName);
+      if (found) matches.push({ date: day.date, weight: found.weight });
+    });
+    const lastTwo = matches.slice(0, 2);
+    if (lastTwo.length === 0) {
+      contentHistoricoIndividual.innerHTML = '<div class="history-day-item" style="justify-content:center; color: var(--text-dim);">Sem histórico para este exercício.</div>';
+      return;
+    }
+    let htmlStr = '';
+    lastTwo.forEach(day => {
+      htmlStr += `<div class="history-day-item"><span>${day.date}</span><span style="color: var(--amber);">${day.weight}</span></div>`;
+    });
+    contentHistoricoIndividual.innerHTML = htmlStr;
   }
 
   seriesBtn.addEventListener('click', () => {
@@ -6135,49 +6177,4 @@
   });
 
   function definirMembroDesde() {
-    if (!profileData.membroDesde) {
-      const dataCadastro = new Date();
-      profileData.membroDesde = { mes: dataCadastro.getMonth(), ano: dataCadastro.getFullYear() };
-      saveProfileData(profileData);
-    }
-    document.getElementById('display-member-since').textContent = `${nomesMesesAbreviados[profileData.membroDesde.mes]}/${profileData.membroDesde.ano}`;
-  }
-
-  profileForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const novoNome = document.getElementById('input-name').value;
-    const novaAltura = document.getElementById('input-height').value;
-    const novaMeta = document.getElementById('input-goal').value;
-    const level = document.getElementById('input-level').value;
-    const novoNascimento = document.getElementById('input-birth').value;
-
-    document.getElementById('display-name').textContent = novoNome;
-    document.getElementById('display-height').textContent = parseFloat(novaAltura).toFixed(2).replace('.', ',') + ' m';
-    document.getElementById('display-goal-main').textContent = novaMeta;
-    document.getElementById('display-level').textContent = 'Nível: ' + level;
-
-    definirMembroDesde();
-
-    const dotsContainer = document.getElementById('display-level-dots');
-    if (level === 'Iniciante') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot"></div><div class="dot"></div>';
-    else if (level === 'Intermediário') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot"></div>';
-    else if (level === 'Avançado') dotsContainer.innerHTML = '<div class="dot active"></div><div class="dot active"></div><div class="dot active"></div>';
-
-    document.getElementById('display-age').textContent = (new Date().getFullYear() - new Date(novoNascimento).getFullYear()) + ' anos';
-    profileModal.classList.remove('open');
-
-    profileData.nome = novoNome;
-    profileData.nascimento = novoNascimento;
-    profileData.altura = novaAltura;
-    profileData.meta = novaMeta;
-    profileData.nivel = level;
-    saveProfileData(profileData);
-  });
-
-  // Repõe na tela tudo o que já havia sido salvo anteriormente (dados
-  // pessoais, peso, meta, medidas e fotos), pois o container é recriado
-  // toda vez que o usuário troca de aba e volta para o Perfil.
-  function renderizarDadosPerfilSalvos() {
-    if (profileData.nome) document.getElementById('display-name').textContent = profileData.nome;
-    if (profileData.altura) document.getElementById('display-height').textContent = parseFloat(profileData.altura).toFixed(2).replace('.', ',') + ' m';
-    if (profileData.m
+ 
