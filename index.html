@@ -859,13 +859,18 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-secondary);
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 10;
   }
 #tela-exercicios .muscle-manage-btn:hover { color: var(--amber); background: rgba(255, 122, 61, 0.1); border-color: rgba(255, 122, 61, 0.3); }
@@ -3622,7 +3627,14 @@
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
         <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
       </div>
-      <div class="form-group" id="containerInputVideoLink"><label>Vídeo/GIF</label><input type="text" id="inputVideoLink" placeholder="Link do YouTube ou da imagem GIF (.gif)"></div>
+      <div class="form-group" id="containerInputVideoLink">
+        <label>Foto do exercício</label>
+        <div class="file-input-wrapper">
+          <input type="file" id="inputExercisePhoto" accept="image/*">
+          <span class="file-input-label">📷 Escolher foto da galeria</span>
+        </div>
+        <img id="exercisePhotoPreview" style="display:none; width:100%; max-height:160px; object-fit:cover; border-radius:12px; margin-top:4px;">
+      </div>
       <button class="save-btn" id="saveBtn">Salvar Alterações</button>
       <button class="btn-modal btn-modal-delete" id="deleteExerciseBtn" style="margin-top: 12px; width: 100%; display: none;">Remover Exercício</button>
     </div>
@@ -3900,7 +3912,7 @@
       const ytId = getYouTubeId(ex.image);
       if (ytId) {
         mediaHtml = `<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg">`;
-      } else if (isDirectGifLink(ex.image)) {
+      } else if (ex.image) {
         mediaHtml = `<img class="gif-media" src="${ex.image}" alt="${ex.name}">`;
       } else {
         mediaHtml = `<svg class="illustration" viewBox="0 0 100 100" fill="none"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
@@ -3992,7 +4004,19 @@
   const seriesBtn = document.getElementById('seriesBtn'); const exSeriesText = document.getElementById('exSeriesText'); const restBtn = document.getElementById('restBtn'); const restDisplay = document.getElementById('restDisplay'); const restLabel = document.getElementById('restLabel');
   const exName = document.getElementById('exName'); const exImageWrapper = document.getElementById('exImageWrapper'); const exRepsText = document.getElementById('exRepsText'); const tagWeightDisplay = document.getElementById('tagWeightDisplay'); const contentHistoricoIndividual = document.getElementById('contentHistoricoIndividual');
   const openSettings = document.getElementById('openSettings'); const closeSettings = document.getElementById('closeSettings'); const modalOverlay = document.getElementById('modalOverlay'); const saveBtn = document.getElementById('saveBtn'); const deleteExerciseBtn = document.getElementById('deleteExerciseBtn');
-  const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputVideoLink = document.getElementById('inputVideoLink');
+  const inputName = document.getElementById('inputName'); const inputVariation = document.getElementById('inputVariation'); const inputSériesTotal = document.getElementById('inputSériesTotal'); const inputReps = document.getElementById('inputReps'); const inputWeight = document.getElementById('inputWeight'); const inputRest = document.getElementById('inputRest'); const inputExercisePhoto = document.getElementById('inputExercisePhoto'); const exercisePhotoPreview = document.getElementById('exercisePhotoPreview');
+  let fotoExercicioSelecionada = null;
+  inputExercisePhoto.addEventListener('change', () => {
+    const arquivo = inputExercisePhoto.files && inputExercisePhoto.files[0];
+    if (!arquivo) return;
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      fotoExercicioSelecionada = leitor.result;
+      exercisePhotoPreview.src = fotoExercicioSelecionada;
+      exercisePhotoPreview.style.display = 'block';
+    };
+    leitor.readAsDataURL(arquivo);
+  });
   const containerInputName = document.getElementById('containerInputName'); const containerInputVariation = document.getElementById('containerInputVariation'); const containerInputVideoLink = document.getElementById('containerInputVideoLink');
   const tabPeso = document.getElementById('tabPeso'); const tabHistoricoIndividual = document.getElementById('tabHistórico');
   const contentPeso = document.getElementById('contentPeso'); const contentHistoricoIndividualArea = document.getElementById('contentHistórico');
@@ -4016,10 +4040,12 @@
     const ytId = getYouTubeId(ex.image);
     if (ytId) {
       exImageWrapper.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&playsinline=1&modestbranding=1" title="${ex.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    } else if (isDirectGifLink(ex.image)) {
+    } else if (ex.image) {
       exImageWrapper.innerHTML = `<img class="gif-media" src="${ex.image}" alt="${ex.name}">`;
-      const gifEl = exImageWrapper.querySelector('img.gif-media');
-      exDetailGifInterval = ativarLoopInfinitoGif(gifEl);
+      if (isDirectGifLink(ex.image)) {
+        const gifEl = exImageWrapper.querySelector('img.gif-media');
+        exDetailGifInterval = ativarLoopInfinitoGif(gifEl);
+      }
     } else {
       exImageWrapper.innerHTML = `<svg class="illustration" viewBox="0 0 100 100" fill="none" style="width:auto;height:60%;opacity:0.85;"><line x1="15" y1="50" x2="85" y2="50" stroke="#252932" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#FF7A3D" /></svg>`;
     }
@@ -4114,7 +4140,10 @@
     inputReps.value = ex.reps; 
     inputWeight.value = ex.weight; 
     inputRest.value = ex.rest; 
-    inputVideoLink.value = ex.image || "";
+    fotoExercicioSelecionada = null;
+    inputExercisePhoto.value = "";
+    if (ex.image) { exercisePhotoPreview.src = ex.image; exercisePhotoPreview.style.display = 'block'; }
+    else { exercisePhotoPreview.style.display = 'none'; }
     
     document.getElementById('modalTitle').textContent = "Editar Exercício";
 
@@ -4140,7 +4169,9 @@
     inputReps.value="12"; 
     inputWeight.value="0"; 
     inputRest.value="90"; 
-    inputVideoLink.value = "";
+    fotoExercicioSelecionada = null;
+    inputExercisePhoto.value = "";
+    exercisePhotoPreview.style.display = 'none';
     
     document.getElementById('modalTitle').textContent = "Novo Exercício";
     containerInputName.style.display = "flex";
@@ -4167,7 +4198,7 @@
         const novoPesoNum = parseFloat(novoPesoStr.replace(',', '.'));
         ex.weight = novoPesoStr; 
         ex.rest = parseInt(inputRest.value) || 90; 
-        ex.image = inputVideoLink.value.trim() || ex.image;
+        ex.image = fotoExercicioSelecionada || ex.image;
         if (!isNaN(pesoAnteriorNum) && !isNaN(novoPesoNum) && novoPesoNum !== pesoAnteriorNum) {
           if (ex.pesoJaFoiAlterado) {
             // Já houve uma alteração de peso antes: agora sim conta como aumento de carga
@@ -4184,7 +4215,7 @@
     } else {
       const nameVal = inputName.value.trim() || "Exercício";
       const uid = `ex-${Date.now()}`;
-      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 12, weight: inputWeight.value.trim() || "0", rest: parseInt(inputRest.value) || 90, image: inputVideoLink.value.trim() || "", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
+      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 12, weight: inputWeight.value.trim() || "0", rest: parseInt(inputRest.value) || 90, image: fotoExercicioSelecionada || "", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
       activeExerciseId = uid;
     }
     saveDatabase(); renderExercises(); loadExerciseToDetail(activeExerciseId); modalOverlay.classList.remove('active');
