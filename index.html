@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script>
+  // Evita que o navegador restaure a posição de scroll antiga ao recarregar
+  // a página (isso acontecia após a verificação automática de atualização).
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Painel de Treino</title>
@@ -73,6 +78,7 @@
     overscroll-behavior-y: contain;
     touch-action: pan-y;
     scrollbar-width: none; /* Firefox */
+    overflow-anchor: none; /* evita que o navegador reajuste o scroll sozinho quando imagens carregam depois */
   }
   .device::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
@@ -842,7 +848,7 @@
 #tela-exercicios .muscle-button:hover { transform: translateY(-2px); border-color: rgba(255, 122, 61, 0.3); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); }
 #tela-exercicios .muscle-button:active { transform: scale(0.98); background: var(--surface-hover); }
 #tela-exercicios .muscle-info-wrapper { display: flex; align-items: center; gap: 12px; z-index: 2; }
-#tela-exercicios .muscle-name { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; color: var(--text); transition: color 0.2s ease; }
+#tela-exercicios .muscle-name { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; color: var(--text); transition: color 0.2s ease; line-height: 1.25; }
 #tela-exercicios .muscle-button:hover .muscle-name { color: var(--amber-2); }
 #tela-exercicios .muscle-manage-btn {
     background: rgba(255, 255, 255, 0.03);
@@ -2230,6 +2236,15 @@
     } else if (nomeAba === 'Perfil') {
       carregarTelaPerfil(container);
     }
+
+    // Garante que a rolagem volte ao topo mesmo depois que imagens/gráficos
+    // da nova aba terminarem de carregar e alterarem a altura do conteúdo.
+    const deviceEl = document.querySelector('.device');
+    if (deviceEl) {
+      deviceEl.scrollTop = 0;
+      requestAnimationFrame(() => { deviceEl.scrollTop = 0; });
+      setTimeout(() => { deviceEl.scrollTop = 0; }, 150);
+    }
   }
 
   /* ============================================================ */
@@ -2912,7 +2927,7 @@
       <!-- Perna/Glúteo -->
       <a class="muscle-button" data-muscle-id="pernas">
         <div class="muscle-info-wrapper">
-          <span class="muscle-name">Perna/Glúteo</span>
+          <span class="muscle-name">Perna/<br>Glúteo</span>
         </div>
         <div class="muscle-right-side">
           <div class="muscle-graphic">
@@ -3607,8 +3622,17 @@
         ex.weight = novoPesoStr; 
         ex.rest = parseInt(inputRest.value) || 90; 
         ex.image = inputVideoLink.value.trim() || ex.image;
-        if (!isNaN(pesoAnteriorNum) && !isNaN(novoPesoNum) && novoPesoNum > pesoAnteriorNum) {
-          registrarAumentoCarga(ex.id);
+        if (!isNaN(pesoAnteriorNum) && !isNaN(novoPesoNum) && novoPesoNum !== pesoAnteriorNum) {
+          if (ex.pesoJaFoiAlterado) {
+            // Já houve uma alteração de peso antes: agora sim conta como aumento de carga
+            if (novoPesoNum > pesoAnteriorNum) {
+              registrarAumentoCarga(ex.id);
+            }
+          } else {
+            // Primeira vez que o peso é definido (ex: saindo do 0 padrão) — não conta
+            // como aumento de carga, só marca que a próxima alteração já pode contar.
+            ex.pesoJaFoiAlterado = true;
+          }
         }
       }
     } else {
@@ -6556,6 +6580,16 @@
 
   // Carrega a tela Início automaticamente ao abrir o app pela primeira vez
   carregarTelaInicio(document.getElementById('main-content'));
+
+  // Garante que a página comece sempre do topo, mesmo em reloads onde o
+  // navegador tentaria restaurar a posição de scroll anterior.
+  const deviceElInicial = document.querySelector('.device');
+  if (deviceElInicial) {
+    deviceElInicial.scrollTop = 0;
+    requestAnimationFrame(() => { deviceElInicial.scrollTop = 0; });
+    window.addEventListener('load', () => { deviceElInicial.scrollTop = 0; });
+    setTimeout(() => { deviceElInicial.scrollTop = 0; }, 200);
+  }
 </script>
 
 <!-- Verificação automática de atualização via GitHub -->
