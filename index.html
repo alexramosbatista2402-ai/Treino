@@ -18,6 +18,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght=500;600;700&family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Importação do Chart.js para o Gráfico Interativo da tela de Perfil -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Firebase (armazenamento na nuvem para permitir recuperar dados em outro celular) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --bg: #0E1013;
@@ -136,6 +139,99 @@
   .nav-item:hover svg {
     transform: translateY(-1px);
   }
+
+  /* ==================================================== */
+  /* ============ TELA DE CADASTRO OBRIGATÓRIO =========== */
+  /* ==================================================== */
+
+  #onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 9999;
+    padding: 32px 24px;
+    box-sizing: border-box;
+  }
+
+  #onboarding-overlay.hidden { display: none; }
+
+  .onboarding-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .onboarding-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .onboarding-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .onboarding-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .onboarding-input::placeholder { color: var(--text-faint); }
+  .onboarding-input:focus { border-color: var(--amber); }
+
+  .onboarding-btn-primary {
+    margin-top: 6px;
+    width: 100%;
+    background: var(--amber);
+    color: #050505;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .onboarding-link {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .onboarding-error {
+    font-size: 13px;
+    color: #FF6B6B;
+    display: none;
+  }
+
+  .onboarding-error.show { display: block; }
+
+  .onboarding-hidden-block { display: none; }
+  .onboarding-hidden-block.show { display: flex; flex-direction: column; gap: 14px; }
 
   /* ==================================================== */
   /* ========= MODAL GLOBAL: CONQUISTA DESBLOQUEADA ====== */
@@ -1655,6 +1751,28 @@
 </style>
 </head>
 <body>
+
+<!-- Tela obrigatória de cadastro (nome + WhatsApp) exibida no primeiro acesso -->
+<div id="onboarding-overlay" class="hidden">
+  <div class="onboarding-card" id="onboarding-cadastro-block">
+    <div class="onboarding-title">Bem-vindo! 👋</div>
+    <div class="onboarding-subtitle">Antes de começar, precisamos do seu nome e WhatsApp. Assim, se você trocar de celular, conseguimos te ajudar a recuperar seus dados e treinos.</div>
+    <input type="text" id="onboarding-input-nome" class="onboarding-input" placeholder="Seu nome">
+    <input type="tel" id="onboarding-input-whatsapp" class="onboarding-input" placeholder="WhatsApp com DDD (ex: 11999998888)">
+    <div class="onboarding-error" id="onboarding-erro-cadastro">Preencha nome e um WhatsApp válido (DDD + número).</div>
+    <button class="onboarding-btn-primary" id="onboarding-btn-cadastrar">Começar</button>
+    <div class="onboarding-link" id="onboarding-link-recuperar">Já tenho conta, quero recuperar meus dados</div>
+  </div>
+
+  <div class="onboarding-hidden-block" id="onboarding-recuperar-block">
+    <div class="onboarding-title">Recuperar acesso</div>
+    <div class="onboarding-subtitle">Digite o WhatsApp que você cadastrou no outro celular para restaurar seus dados e treinos.</div>
+    <input type="tel" id="onboarding-input-whatsapp-recuperar" class="onboarding-input" placeholder="WhatsApp com DDD (ex: 11999998888)">
+    <div class="onboarding-error" id="onboarding-erro-recuperar">Não encontramos nenhum cadastro com esse número.</div>
+    <button class="onboarding-btn-primary" id="onboarding-btn-recuperar">Restaurar meus dados</button>
+    <div class="onboarding-link" id="onboarding-link-cadastrar">Voltar para o cadastro</div>
+  </div>
+</div>
 
 <div class="device">
 
@@ -6556,6 +6674,163 @@
 
   // Carrega a tela Início automaticamente ao abrir o app pela primeira vez
   carregarTelaInicio(document.getElementById('main-content'));
+</script>
+
+<!-- Cadastro obrigatório + sincronização na nuvem (Firebase) + recuperação via WhatsApp -->
+<script>
+(function () {
+  // ======================================================
+  // 1) CONFIGURAÇÃO DO FIREBASE — troque pelos dados do SEU projeto
+  //    (Console do Firebase > Configurações do projeto > Seus apps > SDK)
+  // ======================================================
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    projectId: "SEU_PROJETO",
+    storageBucket: "SEU_PROJETO.appspot.com",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Todas as chaves do localStorage que guardam dados do usuário/app
+  const CHAVES_DADOS_APP = [
+    'app_profile_data',
+    'app_achievement_stats',
+    'custom_muscles',
+    'workout_db',
+    'workout_history_db',
+    'workout_last_date'
+  ];
+
+  function normalizarWhatsapp(valor) {
+    return (valor || '').replace(/\D/g, ''); // deixa só números
+  }
+
+  function usuarioCadastrado() {
+    return !!localStorage.getItem('user_whatsapp');
+  }
+
+  // ------------------------------------------------------
+  // Sincronização: envia os dados locais para o Firestore
+  // ------------------------------------------------------
+  function sincronizarComNuvem() {
+    const whatsapp = localStorage.getItem('user_whatsapp');
+    if (!whatsapp) return;
+
+    const dados = {};
+    CHAVES_DADOS_APP.forEach(chave => {
+      dados[chave] = localStorage.getItem(chave);
+    });
+
+    db.collection('usuarios').doc(whatsapp).set({
+      nome: localStorage.getItem('user_name') || '',
+      whatsapp: whatsapp,
+      dados: dados,
+      atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(() => {});
+  }
+
+  // ------------------------------------------------------
+  // Restauração: busca os dados de um whatsapp no Firestore
+  // e escreve de volta no localStorage deste celular
+  // ------------------------------------------------------
+  function restaurarDaNuvem(whatsapp, aoSucesso, aoFalhar) {
+    db.collection('usuarios').doc(whatsapp).get().then(doc => {
+      if (!doc.exists) { aoFalhar(); return; }
+      const info = doc.data();
+      CHAVES_DADOS_APP.forEach(chave => {
+        const valor = info.dados ? info.dados[chave] : null;
+        if (valor !== null && valor !== undefined) {
+          localStorage.setItem(chave, valor);
+        }
+      });
+      localStorage.setItem('user_whatsapp', whatsapp);
+      localStorage.setItem('user_name', info.nome || '');
+      aoSucesso();
+    }).catch(() => aoFalhar());
+  }
+
+  // Envia o usuário para o próprio WhatsApp com o código de acesso pronto
+  function abrirWhatsappComCodigo(nome, whatsapp) {
+    const mensagem = encodeURIComponent(
+      `Olá, ${nome}! ✅ Seu cadastro no Painel de Treino foi feito.\n\n` +
+      `Se um dia trocar de celular, abra o app, toque em "Já tenho conta" e digite este mesmo número de WhatsApp (${whatsapp}) para recuperar seus treinos e dados automaticamente.`
+    );
+    window.open(`https://wa.me/${whatsapp}?text=${mensagem}`, '_blank');
+  }
+
+  // ------------------------------------------------------
+  // Controle da tela de cadastro/recuperação
+  // ------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', function () {
+    const overlay = document.getElementById('onboarding-overlay');
+
+    if (usuarioCadastrado()) {
+      overlay.classList.add('hidden');
+    } else {
+      overlay.classList.remove('hidden');
+    }
+
+    const blocoCadastro = document.getElementById('onboarding-cadastro-block');
+    const blocoRecuperar = document.getElementById('onboarding-recuperar-block');
+
+    document.getElementById('onboarding-link-recuperar').addEventListener('click', () => {
+      blocoCadastro.style.display = 'none';
+      blocoRecuperar.classList.add('show');
+    });
+
+    document.getElementById('onboarding-link-cadastrar').addEventListener('click', () => {
+      blocoRecuperar.classList.remove('show');
+      blocoCadastro.style.display = 'flex';
+    });
+
+    document.getElementById('onboarding-btn-cadastrar').addEventListener('click', () => {
+      const nome = document.getElementById('onboarding-input-nome').value.trim();
+      const whatsapp = normalizarWhatsapp(document.getElementById('onboarding-input-whatsapp').value);
+      const erro = document.getElementById('onboarding-erro-cadastro');
+
+      if (!nome || whatsapp.length < 10) {
+        erro.classList.add('show');
+        return;
+      }
+      erro.classList.remove('show');
+
+      localStorage.setItem('user_name', nome);
+      localStorage.setItem('user_whatsapp', whatsapp);
+
+      sincronizarComNuvem();
+      abrirWhatsappComCodigo(nome, whatsapp);
+
+      overlay.classList.add('hidden');
+    });
+
+    document.getElementById('onboarding-btn-recuperar').addEventListener('click', () => {
+      const whatsapp = normalizarWhatsapp(document.getElementById('onboarding-input-whatsapp-recuperar').value);
+      const erro = document.getElementById('onboarding-erro-recuperar');
+
+      if (whatsapp.length < 10) {
+        erro.classList.add('show');
+        return;
+      }
+
+      restaurarDaNuvem(whatsapp, () => {
+        // sucesso: recarrega a página para o app reler os dados restaurados
+        location.reload();
+      }, () => {
+        erro.classList.add('show');
+      });
+    });
+  });
+
+  // Sincroniza periodicamente e quando o app vai para segundo plano
+  setInterval(sincronizarComNuvem, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') sincronizarComNuvem();
+  });
+})();
 </script>
 
 <!-- Verificação automática de atualização via GitHub -->
