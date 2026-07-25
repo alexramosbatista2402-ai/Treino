@@ -138,124 +138,6 @@
   }
 
   /* ==================================================== */
-  /* ===== GATE DE ACESSO: VERIFICAÇÃO POR WHATSAPP ====== */
-  /* ==================================================== */
-
-  .wa-gate-overlay {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 430px;
-    height: 100%;
-    height: 100dvh;
-    background: #050505;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 8000;
-    padding: 24px;
-    box-sizing: border-box;
-  }
-  .wa-gate-overlay.hidden { display: none; }
-
-  .wa-gate-card {
-    width: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(255, 122, 61, 0.16) 0%, rgba(26, 29, 35, 0) 60%), var(--surface);
-    border: 1.5px solid rgba(255, 122, 61, 0.35);
-    border-radius: 24px;
-    padding: 30px 22px;
-    text-align: center;
-  }
-
-  .wa-gate-logo {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 18px;
-    border-radius: 16px;
-    background: rgba(255, 122, 61, 0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .wa-gate-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 21px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .wa-gate-desc {
-    font-size: 13.5px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    margin-bottom: 20px;
-  }
-
-  .wa-gate-field { text-align: left; margin-bottom: 8px; }
-  .wa-gate-field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-  }
-  .wa-gate-field input {
-    width: 100%;
-    background: #202328;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 13px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    outline: none;
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-  .wa-gate-field input:focus { border-color: var(--amber); }
-
-  .wa-gate-error {
-    color: #FF8585;
-    font-size: 12.5px;
-    min-height: 16px;
-    margin: 6px 0 4px;
-  }
-
-  .wa-gate-btn {
-    width: 100%;
-    background: var(--amber);
-    color: #0E1013;
-    border: none;
-    border-radius: 12px;
-    padding: 14px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: opacity 0.2s;
-  }
-  .wa-gate-btn:active { opacity: 0.9; }
-  .wa-gate-btn:disabled { opacity: 0.5; }
-
-  .wa-gate-link {
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--text-dim);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    padding: 10px;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .wa-gate-link:disabled { opacity: 0.5; text-decoration: none; cursor: default; }
-
-  /* ==================================================== */
   /* ========= MODAL GLOBAL: CONQUISTA DESBLOQUEADA ====== */
   /* ==================================================== */
 
@@ -1866,103 +1748,9 @@
     </div>
   </div>
 
-  <!-- GATE DE ACESSO: verificação por WhatsApp no primeiro contato com o app -->
-  <div class="wa-gate-overlay hidden" id="waGateOverlay">
-    <div class="wa-gate-card">
-      <div class="wa-gate-logo">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FF7A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      </div>
-
-      <!-- ETAPA 1: pedir número do WhatsApp -->
-      <div class="wa-gate-step" id="waStepNumero">
-        <h2 class="wa-gate-title">Bem-vindo!</h2>
-        <p class="wa-gate-desc">Para usar o app de treino, confirme seu número de WhatsApp. Vamos enviar um código de verificação por lá.</p>
-        <div class="wa-gate-field">
-          <label for="wa-input-numero">Número do WhatsApp (DDD + número)</label>
-          <input type="tel" id="wa-input-numero" placeholder="Ex: 17999999999" inputmode="numeric" maxlength="13">
-        </div>
-        <p class="wa-gate-error" id="wa-erro-numero"></p>
-        <button type="button" class="wa-gate-btn" id="wa-btn-enviar-codigo">Enviar código</button>
-      </div>
-
-      <!-- ETAPA 2: confirmar código recebido no WhatsApp -->
-      <div class="wa-gate-step" id="waStepCodigo" style="display:none;">
-        <h2 class="wa-gate-title">Confirme o código</h2>
-        <p class="wa-gate-desc">Enviamos um código de 6 dígitos por WhatsApp para <strong id="wa-numero-exibido"></strong>.</p>
-        <div class="wa-gate-field">
-          <label for="wa-input-codigo">Código de verificação</label>
-          <input type="text" id="wa-input-codigo" placeholder="000000" inputmode="numeric" maxlength="6">
-        </div>
-        <p class="wa-gate-error" id="wa-erro-codigo"></p>
-        <button type="button" class="wa-gate-btn" id="wa-btn-confirmar-codigo">Confirmar e entrar</button>
-        <button type="button" class="wa-gate-link" id="wa-btn-reenviar-codigo">Reenviar código</button>
-        <button type="button" class="wa-gate-link" id="wa-btn-trocar-numero">Usar outro número</button>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script>
-  /* ============================================================ */
-  /* ====  VERIFICAÇÃO DE WHATSAPP (login por número no app)  ==== */
-  /* ============================================================ */
-  // IMPORTANTE: para o envio real do código pelo WhatsApp funcionar,
-  // configure um backend próprio (veja a pasta /backend-whatsapp com um
-  // exemplo pronto usando a Z-API) e troque a URL abaixo pela do seu
-  // backend publicado. Enquanto API_BASE_URL não for configurada, o
-  // envio do código vai falhar e uma mensagem de erro aparecerá na tela.
-  const WA_CONFIG = {
-    API_BASE_URL: 'https://treino-backend-whatsapp.onrender.com'
-  };
-
-  const WA_STORAGE_KEY = 'app_whatsapp_verificado';
-
-  function waGetDadosSalvos() {
-    try { return JSON.parse(localStorage.getItem(WA_STORAGE_KEY)); } catch (e) { return null; }
-  }
-  function waSalvarDados(numero) {
-    localStorage.setItem(WA_STORAGE_KEY, JSON.stringify({ numero, verificadoEm: new Date().toISOString() }));
-  }
-  function waEstaVerificado() {
-    const dados = waGetDadosSalvos();
-    return !!(dados && dados.numero);
-  }
-  function waFormatarNumero(valor) {
-    return String(valor || '').replace(/\D/g, '');
-  }
-  function waNumeroValido(valor) {
-    const digitos = waFormatarNumero(valor);
-    return digitos.length >= 10 && digitos.length <= 13;
-  }
-  function waFormatarExibicao(numero) {
-    const d = waFormatarNumero(numero);
-    if (d.length <= 4) return d;
-    return `•••••${d.slice(-4)}`;
-  }
-  async function waEnviarCodigo(numero) {
-    const resp = await fetch(`${WA_CONFIG.API_BASE_URL}/send-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ numero })
-    });
-    if (!resp.ok) throw new Error('Falha ao enviar código');
-    return resp.json();
-  }
-  async function waConfirmarCodigo(numero, codigo) {
-    const resp = await fetch(`${WA_CONFIG.API_BASE_URL}/verify-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ numero, codigo })
-    });
-    const dados = await resp.json().catch(() => ({}));
-    if (!resp.ok || !dados.ok) throw new Error(dados.erro || 'Código inválido');
-    return dados;
-  }
-
   /* ============================================================ */
   /* ============  MOTOR DE ESTATÍSTICAS / CONQUISTAS  =========== */
   /* ============================================================ */
@@ -6107,15 +5895,6 @@
       <p style="color: var(--text-dim); font-size: 13.5px; line-height: 1.5; margin-bottom: 18px;">
         Gerencie os dados salvos deste aplicativo neste aparelho.
       </p>
-
-      <div style="border: 1px solid rgba(255,122,61,0.25); background: rgba(255,122,61,0.06); border-radius: 12px; padding: 16px; margin-bottom: 14px;">
-        <p style="color: var(--amber-2); font-size: 13px; font-weight: 700; margin-bottom: 6px;">WhatsApp cadastrado</p>
-        <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 14px;" id="display-wa-numero">--</p>
-        <button type="button" class="save-btn" id="open-wa-change-btn" style="margin-top:0;">
-          Trocar número do WhatsApp
-        </button>
-      </div>
-
       <div style="border: 1px solid rgba(255,75,75,0.3); background: rgba(255,75,75,0.08); border-radius: 12px; padding: 16px;">
         <p style="color: #FF8585; font-size: 13px; font-weight: 700; margin-bottom: 6px;">Zona de risco</p>
         <p style="color: var(--text-dim); font-size: 13px; line-height: 1.5; margin-bottom: 14px;">
@@ -6125,44 +5904,6 @@
           Apagar todos os dados e recomeçar
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL: TROCAR NÚMERO DO WHATSAPP - ETAPA 1 (novo número) -->
-  <div class="modal-overlay" id="wa-change-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title">Trocar número</span>
-        <button class="close-modal-btn" id="close-wa-change-modal-btn">&times;</button>
-      </div>
-      <p style="color: var(--text-dim); font-size: 13.5px; line-height: 1.5; margin-bottom: 18px;">
-        Informe o novo número. Vamos enviar um código de confirmação por WhatsApp para ele.
-      </p>
-      <div class="form-group">
-        <label for="wa-change-input-numero">Novo número (DDD + número)</label>
-        <input type="tel" id="wa-change-input-numero" placeholder="Ex: 17999999999" inputmode="numeric" maxlength="13">
-      </div>
-      <p style="color:#FF8585; font-size:12.5px; min-height:16px; margin-top:8px;" id="wa-change-erro"></p>
-      <button type="button" class="save-btn" id="wa-change-enviar-btn">Enviar código</button>
-    </div>
-  </div>
-
-  <!-- MODAL: TROCAR NÚMERO DO WHATSAPP - ETAPA 2 (confirmar código) -->
-  <div class="modal-overlay" id="wa-change-code-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title">Confirmar código</span>
-        <button class="close-modal-btn" id="close-wa-change-code-modal-btn">&times;</button>
-      </div>
-      <p style="color: var(--text-dim); font-size: 13.5px; line-height: 1.5; margin-bottom: 18px;">
-        Digite o código de 6 dígitos enviado por WhatsApp para <strong id="wa-change-numero-exibido"></strong>.
-      </p>
-      <div class="form-group">
-        <label for="wa-change-input-codigo">Código de verificação</label>
-        <input type="text" id="wa-change-input-codigo" placeholder="000000" inputmode="numeric" maxlength="6">
-      </div>
-      <p style="color:#FF8585; font-size:12.5px; min-height:16px; margin-top:8px;" id="wa-change-codigo-erro"></p>
-      <button type="button" class="save-btn" id="wa-change-confirmar-btn">Confirmar troca</button>
     </div>
   </div>
 
@@ -6357,83 +6098,6 @@
   closeResetConfirmBtn.addEventListener('click', () => resetConfirmModal.classList.remove('open'));
   cancelResetBtn.addEventListener('click', () => resetConfirmModal.classList.remove('open'));
 
-  // Trocar número do WhatsApp (dentro de Configurações)
-  const displayWaNumero = document.getElementById('display-wa-numero');
-  const waDadosAtuais = waGetDadosSalvos();
-  if (displayWaNumero) {
-    displayWaNumero.textContent = waDadosAtuais && waDadosAtuais.numero
-      ? waFormatarExibicao(waDadosAtuais.numero)
-      : 'Nenhum número confirmado';
-  }
-
-  const openWaChangeBtn = document.getElementById('open-wa-change-btn');
-  const closeWaChangeModalBtn = document.getElementById('close-wa-change-modal-btn');
-  const closeWaChangeCodeModalBtn = document.getElementById('close-wa-change-code-modal-btn');
-  const waChangeModal = document.getElementById('wa-change-modal');
-  const waChangeCodeModal = document.getElementById('wa-change-code-modal');
-  const waChangeEnviarBtn = document.getElementById('wa-change-enviar-btn');
-  const waChangeConfirmarBtn = document.getElementById('wa-change-confirmar-btn');
-  let waNovoNumeroTemp = null;
-
-  openWaChangeBtn.addEventListener('click', () => {
-    document.getElementById('wa-change-input-numero').value = '';
-    document.getElementById('wa-change-erro').textContent = '';
-    settingsModal.classList.remove('open');
-    waChangeModal.classList.add('open');
-  });
-  closeWaChangeModalBtn.addEventListener('click', () => waChangeModal.classList.remove('open'));
-  closeWaChangeCodeModalBtn.addEventListener('click', () => waChangeCodeModal.classList.remove('open'));
-
-  waChangeEnviarBtn.addEventListener('click', async () => {
-    const numeroDigitado = document.getElementById('wa-change-input-numero').value;
-    const erroEl = document.getElementById('wa-change-erro');
-    erroEl.textContent = '';
-    if (!waNumeroValido(numeroDigitado)) {
-      erroEl.textContent = 'Digite um número válido, com DDD.';
-      return;
-    }
-    const numeroLimpo = waFormatarNumero(numeroDigitado);
-    waChangeEnviarBtn.disabled = true;
-    waChangeEnviarBtn.textContent = 'Enviando...';
-    try {
-      await waEnviarCodigo(numeroLimpo);
-      waNovoNumeroTemp = numeroLimpo;
-      document.getElementById('wa-change-numero-exibido').textContent = waFormatarExibicao(numeroLimpo);
-      document.getElementById('wa-change-input-codigo').value = '';
-      document.getElementById('wa-change-codigo-erro').textContent = '';
-      waChangeModal.classList.remove('open');
-      waChangeCodeModal.classList.add('open');
-    } catch (err) {
-      erroEl.textContent = 'Não foi possível enviar o código agora. Tente novamente em instantes.';
-    } finally {
-      waChangeEnviarBtn.disabled = false;
-      waChangeEnviarBtn.textContent = 'Enviar código';
-    }
-  });
-
-  waChangeConfirmarBtn.addEventListener('click', async () => {
-    const codigo = document.getElementById('wa-change-input-codigo').value.trim();
-    const erroEl = document.getElementById('wa-change-codigo-erro');
-    erroEl.textContent = '';
-    if (codigo.length !== 6) {
-      erroEl.textContent = 'Digite os 6 dígitos do código.';
-      return;
-    }
-    waChangeConfirmarBtn.disabled = true;
-    waChangeConfirmarBtn.textContent = 'Confirmando...';
-    try {
-      await waConfirmarCodigo(waNovoNumeroTemp, codigo);
-      waSalvarDados(waNovoNumeroTemp);
-      if (displayWaNumero) displayWaNumero.textContent = waFormatarExibicao(waNovoNumeroTemp);
-      waChangeCodeModal.classList.remove('open');
-    } catch (err) {
-      erroEl.textContent = 'Código inválido ou expirado.';
-    } finally {
-      waChangeConfirmarBtn.disabled = false;
-      waChangeConfirmarBtn.textContent = 'Confirmar troca';
-    }
-  });
-
   confirmResetBtn.addEventListener('click', () => {
     localStorage.removeItem('app_achievement_stats');
     localStorage.removeItem('app_profile_data');
@@ -6442,7 +6106,6 @@
     localStorage.removeItem('custom_muscles');
     localStorage.removeItem('workout_history_db');
     localStorage.removeItem('workout_last_date');
-    localStorage.removeItem('app_whatsapp_verificado');
     location.reload();
   });
 
@@ -6891,117 +6554,8 @@
   renderizarDadosPerfilSalvos();
   }
 
-  // ================================================================
-  // GATE DE ACESSO — Verificação de WhatsApp no primeiro contato.
-  // Só carrega a tela Início depois que o número for confirmado.
-  // ================================================================
-  (function iniciarGateWhatsApp() {
-    const gateOverlay = document.getElementById('waGateOverlay');
-    const stepNumero = document.getElementById('waStepNumero');
-    const stepCodigo = document.getElementById('waStepCodigo');
-    const inputNumero = document.getElementById('wa-input-numero');
-    const inputCodigo = document.getElementById('wa-input-codigo');
-    const erroNumero = document.getElementById('wa-erro-numero');
-    const erroCodigo = document.getElementById('wa-erro-codigo');
-    const btnEnviar = document.getElementById('wa-btn-enviar-codigo');
-    const btnConfirmar = document.getElementById('wa-btn-confirmar-codigo');
-    const btnReenviar = document.getElementById('wa-btn-reenviar-codigo');
-    const btnTrocarNumero = document.getElementById('wa-btn-trocar-numero');
-    const numeroExibido = document.getElementById('wa-numero-exibido');
-
-    let numeroPendente = null;
-    let cooldownAtivo = false;
-
-    function liberarAcessoApp() {
-      gateOverlay.classList.add('hidden');
-      carregarTelaInicio(document.getElementById('main-content'));
-    }
-
-    // Já confirmou o WhatsApp antes neste aparelho: entra direto.
-    if (waEstaVerificado()) {
-      liberarAcessoApp();
-      return;
-    }
-
-    gateOverlay.classList.remove('hidden');
-
-    function iniciarCooldownReenvio() {
-      cooldownAtivo = true;
-      let segundos = 60;
-      btnReenviar.disabled = true;
-      btnReenviar.textContent = `Reenviar código (${segundos}s)`;
-      const timer = setInterval(() => {
-        segundos--;
-        if (segundos <= 0) {
-          clearInterval(timer);
-          cooldownAtivo = false;
-          btnReenviar.disabled = false;
-          btnReenviar.textContent = 'Reenviar código';
-        } else {
-          btnReenviar.textContent = `Reenviar código (${segundos}s)`;
-        }
-      }, 1000);
-    }
-
-    async function enviarCodigo() {
-      erroNumero.textContent = '';
-      if (!waNumeroValido(inputNumero.value)) {
-        erroNumero.textContent = 'Digite um número válido, com DDD.';
-        return;
-      }
-      const numeroLimpo = waFormatarNumero(inputNumero.value);
-      btnEnviar.disabled = true;
-      btnEnviar.textContent = 'Enviando...';
-      try {
-        await waEnviarCodigo(numeroLimpo);
-        numeroPendente = numeroLimpo;
-        numeroExibido.textContent = waFormatarExibicao(numeroLimpo);
-        inputCodigo.value = '';
-        erroCodigo.textContent = '';
-        stepNumero.style.display = 'none';
-        stepCodigo.style.display = 'block';
-        iniciarCooldownReenvio();
-      } catch (err) {
-        erroNumero.textContent = 'Não foi possível enviar o código agora. Tente novamente em instantes.';
-      } finally {
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = 'Enviar código';
-      }
-    }
-
-    btnEnviar.addEventListener('click', enviarCodigo);
-    inputNumero.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviarCodigo(); });
-
-    btnConfirmar.addEventListener('click', async () => {
-      erroCodigo.textContent = '';
-      const codigo = inputCodigo.value.trim();
-      if (codigo.length !== 6) {
-        erroCodigo.textContent = 'Digite os 6 dígitos do código.';
-        return;
-      }
-      btnConfirmar.disabled = true;
-      btnConfirmar.textContent = 'Confirmando...';
-      try {
-        await waConfirmarCodigo(numeroPendente, codigo);
-        waSalvarDados(numeroPendente);
-        liberarAcessoApp();
-      } catch (err) {
-        erroCodigo.textContent = 'Código inválido ou expirado.';
-      } finally {
-        btnConfirmar.disabled = false;
-        btnConfirmar.textContent = 'Confirmar e entrar';
-      }
-    });
-    inputCodigo.addEventListener('keydown', (e) => { if (e.key === 'Enter') btnConfirmar.click(); });
-
-    btnReenviar.addEventListener('click', () => { if (!cooldownAtivo) enviarCodigo(); });
-
-    btnTrocarNumero.addEventListener('click', () => {
-      stepCodigo.style.display = 'none';
-      stepNumero.style.display = 'block';
-      erroNumero.textContent = '';
-    });
-  })();
+  // Carrega a tela Início automaticamente ao abrir o app pela primeira vez
+  carregarTelaInicio(document.getElementById('main-content'));
 </script>
 
 <!-- Verificação automática de atualização via GitHub -->
