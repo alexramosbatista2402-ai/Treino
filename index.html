@@ -23,6 +23,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght=500;600;700&family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Importação do Chart.js para o Gráfico Interativo da tela de Perfil -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Firebase: login por e-mail/senha + Firestore para sincronizar os dados entre aparelhos -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --bg: #0E1013;
@@ -1658,11 +1662,180 @@
     transition: background 0.2s; }
 
   #tela-perfil .save-btn:hover { background: #e65c20; }
+
+  /* ==================================================== */
+  /* ============  TELA DE LOGIN / CADASTRO  ============ */
+  /* ==================================================== */
+  #auth-overlay{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100%;
+    height: 100dvh;
+    background: var(--bg);
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 24px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  #auth-overlay.hidden{ display: none; }
+
+  .auth-logo{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .auth-subtitle{
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  .auth-field{
+    margin-bottom: 14px;
+  }
+  .auth-field label{
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .auth-field input{
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+  }
+  .auth-field input:focus{ border-color: var(--amber); }
+  .auth-submit-btn{
+    width: 100%;
+    background: var(--amber);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s ease;
+  }
+  .auth-submit-btn:disabled{ opacity: 0.55; pointer-events: none; }
+  .auth-toggle-row{
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+  }
+  .auth-toggle-row a, .auth-forgot-link{
+    color: var(--amber-2);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .auth-forgot-link{
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 12.5px;
+  }
+  .auth-error{
+    background: rgba(255,75,75,0.1);
+    border: 1px solid rgba(255,75,75,0.3);
+    color: #FF8585;
+    font-size: 12.5px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    line-height: 1.4;
+    display: none;
+  }
+  .auth-error.show{ display: block; }
+  .auth-loading{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100%;
+    height: 100dvh;
+    background: var(--bg);
+    z-index: 9500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .auth-loading.hidden{ display: none; }
+  .auth-spinner{
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(255,122,61,0.2);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: auth-spin 0.8s linear infinite;
+  }
+  @keyframes auth-spin{ to{ transform: rotate(360deg); } }
+  .auth-loading span{ color: var(--text-dim); font-size: 13px; }
 </style>
 </head>
 <body>
 
-<div class="device">
+<!-- TELA DE CARREGAMENTO: aparece enquanto verificamos o login e buscamos os dados salvos na nuvem -->
+<div class="auth-loading" id="auth-loading">
+  <div class="auth-spinner"></div>
+  <span id="auth-loading-text">Carregando seus dados...</span>
+</div>
+
+<!-- TELA DE LOGIN / CADASTRO -->
+<div class="auth-overlay hidden" id="auth-overlay">
+  <div class="auth-logo">Painel de Treino</div>
+  <div class="auth-subtitle" id="auth-subtitle">Entre com seu e-mail e senha para acessar seus treinos em qualquer aparelho.</div>
+
+  <div class="auth-error" id="auth-error"></div>
+
+  <form id="auth-form">
+    <div class="auth-field">
+      <label for="auth-email">E-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" required placeholder="voce@exemplo.com">
+    </div>
+    <div class="auth-field">
+      <label for="auth-password">Senha</label>
+      <input type="password" id="auth-password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+    </div>
+    <div class="auth-field hidden" id="auth-confirm-field">
+      <label for="auth-password-confirm">Confirmar senha</label>
+      <input type="password" id="auth-password-confirm" autocomplete="new-password" placeholder="Repita a senha" minlength="6">
+    </div>
+    <button type="submit" class="auth-submit-btn" id="auth-submit-btn">Entrar</button>
+  </form>
+
+  <a class="auth-forgot-link" id="auth-forgot-link">Esqueci minha senha</a>
+
+  <div class="auth-toggle-row">
+    <span id="auth-toggle-text">Não tem conta?</span>
+    <a id="auth-toggle-link">Criar conta</a>
+  </div>
+</div>
+
+<div class="device" id="device-root" style="display:none;">
 
   <!-- Conteúdo Dinâmico (Textos removidos daqui) -->
   <div class="content" id="main-content">
@@ -1757,6 +1930,263 @@
 </div>
 
 <script>
+  /* ============================================================ */
+  /* ===========  FIREBASE: LOGIN + SINCRONIZAÇÃO NA NUVEM  ======= */
+  /* ============================================================ */
+  /* Antes de rodar o app, verificamos se o usuário está logado.    */
+  /* Se estiver, buscamos os dados salvos na nuvem (Firestore) e    */
+  /* colocamos no localStorage deste aparelho ANTES do app iniciar, */
+  /* garantindo que o histórico apareça igual em qualquer celular.  */
+
+  // 1) SUBSTITUA os valores abaixo pelos dados do SEU projeto Firebase
+  //    (Console do Firebase > Configurações do projeto > Seus apps > SDK).
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBGVssoMXUf0C_NZziTiIDPn2TyxE3_3s",
+    authDomain: "treino-a090c.firebaseapp.com",
+    projectId: "treino-a090c",
+    storageBucket: "treino-a090c.firebasestorage.app",
+    messagingSenderId: "220079472298",
+    appId: "1:220079472298:web:7fef63a0cafd43f098dad3",
+    measurementId: "G-6RR5EY55PL"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  window.firebaseAuth = auth;
+  window.firebaseDB = db;
+
+  // Chaves do localStorage que representam dados do usuário e que
+  // precisam ser sincronizadas entre aparelhos.
+  const CHAVES_SINCRONIZADAS = [
+    'app_achievement_stats',
+    'app_profile_data',
+    'workout_db',
+    'custom_muscles',
+    'workout_history_db',
+    'workout_last_date'
+  ];
+
+  const authLoadingEl = document.getElementById('auth-loading');
+  const authLoadingTextEl = document.getElementById('auth-loading-text');
+  const authOverlayEl = document.getElementById('auth-overlay');
+  const deviceRootEl = document.getElementById('device-root');
+  const authForm = document.getElementById('auth-form');
+  const authEmailInput = document.getElementById('auth-email');
+  const authPasswordInput = document.getElementById('auth-password');
+  const authConfirmField = document.getElementById('auth-confirm-field');
+  const authConfirmInput = document.getElementById('auth-password-confirm');
+  const authSubmitBtn = document.getElementById('auth-submit-btn');
+  const authErrorEl = document.getElementById('auth-error');
+  const authToggleLink = document.getElementById('auth-toggle-link');
+  const authToggleText = document.getElementById('auth-toggle-text');
+  const authSubtitleEl = document.getElementById('auth-subtitle');
+  const authForgotLink = document.getElementById('auth-forgot-link');
+
+  let modoCadastro = false;
+  let appJaIniciado = false;
+  let sincronizacaoAtiva = false; // só liga o envio pra nuvem depois que os dados iniciais já foram restaurados
+
+  function mostrarErroAuth(msg) {
+    authErrorEl.textContent = msg;
+    authErrorEl.classList.add('show');
+  }
+  function limparErroAuth() {
+    authErrorEl.classList.remove('show');
+    authErrorEl.textContent = '';
+  }
+  function traduzirErroFirebase(err) {
+    const codigo = err && err.code ? err.code : '';
+    const mapa = {
+      'auth/invalid-email': 'E-mail inválido.',
+      'auth/user-disabled': 'Esta conta foi desativada.',
+      'auth/user-not-found': 'E-mail ou senha incorretos.',
+      'auth/wrong-password': 'E-mail ou senha incorretos.',
+      'auth/invalid-credential': 'E-mail ou senha incorretos.',
+      'auth/email-already-in-use': 'Já existe uma conta com este e-mail. Tente entrar.',
+      'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
+      'auth/too-many-requests': 'Muitas tentativas. Aguarde um momento e tente de novo.',
+      'auth/network-request-failed': 'Falha de conexão. Verifique sua internet.'
+    };
+    return mapa[codigo] || 'Não foi possível concluir. Tente novamente.';
+  }
+
+  authToggleLink.addEventListener('click', () => {
+    modoCadastro = !modoCadastro;
+    limparErroAuth();
+    if (modoCadastro) {
+      authSubmitBtn.textContent = 'Criar conta';
+      authToggleText.textContent = 'Já tem conta?';
+      authToggleLink.textContent = 'Entrar';
+      authSubtitleEl.textContent = 'Crie sua conta para salvar seus treinos e acessá-los em qualquer aparelho.';
+      authConfirmField.classList.remove('hidden');
+      authConfirmInput.required = true;
+      authForgotLink.style.display = 'none';
+    } else {
+      authSubmitBtn.textContent = 'Entrar';
+      authToggleText.textContent = 'Não tem conta?';
+      authToggleLink.textContent = 'Criar conta';
+      authSubtitleEl.textContent = 'Entre com seu e-mail e senha para acessar seus treinos em qualquer aparelho.';
+      authConfirmField.classList.add('hidden');
+      authConfirmInput.required = false;
+      authForgotLink.style.display = 'block';
+    }
+  });
+
+  authForgotLink.addEventListener('click', () => {
+    limparErroAuth();
+    const email = authEmailInput.value.trim();
+    if (!email) { mostrarErroAuth('Digite seu e-mail acima e toque em "Esqueci minha senha" novamente.'); return; }
+    auth.sendPasswordResetEmail(email)
+      .then(() => mostrarErroAuth('Enviamos um link de redefinição de senha para o seu e-mail.'))
+      .catch(err => mostrarErroAuth(traduzirErroFirebase(err)));
+  });
+
+  authForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    limparErroAuth();
+    const email = authEmailInput.value.trim();
+    const senha = authPasswordInput.value;
+
+    if (modoCadastro && senha !== authConfirmInput.value) {
+      mostrarErroAuth('As senhas não coincidem.');
+      return;
+    }
+
+    authSubmitBtn.disabled = true;
+    authSubmitBtn.textContent = modoCadastro ? 'Criando conta...' : 'Entrando...';
+
+    const acao = modoCadastro
+      ? auth.createUserWithEmailAndPassword(email, senha)
+      : auth.signInWithEmailAndPassword(email, senha);
+
+    acao.catch(err => {
+      mostrarErroAuth(traduzirErroFirebase(err));
+      authSubmitBtn.disabled = false;
+      authSubmitBtn.textContent = modoCadastro ? 'Criar conta' : 'Entrar';
+    });
+  });
+
+  // Lê todos os dados relevantes deste aparelho (localStorage) e devolve um objeto simples
+  function coletarDadosLocais() {
+    const dados = {};
+    CHAVES_SINCRONIZADAS.forEach(chave => {
+      const valor = localStorage.getItem(chave);
+      if (valor !== null) dados[chave] = valor;
+    });
+    return dados;
+  }
+
+  // Envia os dados atuais do aparelho para o Firestore (documento do usuário logado)
+  let timeoutSincronizacao = null;
+  function agendarSincronizacaoNuvem() {
+    if (!sincronizacaoAtiva || !auth.currentUser) return;
+    clearTimeout(timeoutSincronizacao);
+    timeoutSincronizacao = setTimeout(() => {
+      const dados = coletarDadosLocais();
+      dados.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('usuarios').doc(auth.currentUser.uid).set(dados, { merge: true })
+        .catch(err => console.error('Erro ao sincronizar com a nuvem:', err));
+    }, 1200);
+  }
+
+  // Sobrescreve o localStorage.setItem para, sempre que o app salvar algo,
+  // também mandarmos essa informação para a nuvem (com um pequeno atraso,
+  // para não gerar uma gravação por tecla digitada).
+  const _localStorageSetItemOriginal = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function(chave, valor) {
+    _localStorageSetItemOriginal(chave, valor);
+    if (CHAVES_SINCRONIZADAS.includes(chave)) agendarSincronizacaoNuvem();
+  };
+
+  // Limpa o documento do usuário na nuvem (usado no botão "Apagar todos os dados")
+  window.limparDadosNaNuvem = function() {
+    if (!auth.currentUser) return Promise.resolve();
+    return db.collection('usuarios').doc(auth.currentUser.uid).delete().catch(() => {});
+  };
+
+  window.sairDaConta = function() {
+    sincronizacaoAtiva = false;
+    auth.signOut().then(() => location.reload());
+  };
+
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'open-logout-confirm-btn') {
+      if (confirm('Deseja sair da sua conta neste aparelho?')) {
+        window.sairDaConta();
+      }
+    }
+  });
+
+  // Pega o script principal do app (guardado como texto inerte) e executa de
+  // verdade, agora que já garantimos que os dados corretos estão no localStorage.
+  function iniciarAppPrincipal() {
+    if (appJaIniciado) return;
+    appJaIniciado = true;
+    sincronizacaoAtiva = true;
+    authLoadingEl.classList.add('hidden');
+    authOverlayEl.classList.add('hidden');
+    deviceRootEl.style.display = '';
+
+    const scriptInerte = document.getElementById('app-main-script');
+    const novoScript = document.createElement('script');
+    novoScript.text = scriptInerte.textContent;
+    document.body.appendChild(novoScript);
+  }
+
+  auth.onAuthStateChanged((usuario) => {
+    if (!usuario) {
+      appJaIniciado = false;
+      sincronizacaoAtiva = false;
+      authLoadingEl.classList.add('hidden');
+      deviceRootEl.style.display = 'none';
+      authOverlayEl.classList.remove('hidden');
+      return;
+    }
+
+    authOverlayEl.classList.add('hidden');
+    authLoadingEl.classList.remove('hidden');
+    authLoadingTextEl.textContent = 'Carregando seus dados...';
+    const emailDisplayEl = document.getElementById('display-account-email');
+    if (emailDisplayEl) emailDisplayEl.textContent = usuario.email || '—';
+
+    db.collection('usuarios').doc(usuario.uid).get()
+      .then(doc => {
+        if (doc.exists) {
+          // Já existem dados desta conta na nuvem (ex.: outro aparelho já usou o app).
+          // Eles têm prioridade e substituem o que estiver salvo neste aparelho.
+          const dados = doc.data();
+          CHAVES_SINCRONIZADAS.forEach(chave => {
+            if (dados[chave] !== undefined) {
+              _localStorageSetItemOriginal(chave, dados[chave]);
+            }
+          });
+        } else {
+          // Primeira vez que esta conta sincroniza: se já houver dados
+          // salvos neste aparelho (uso antes de criar a conta), enviamos
+          // para a nuvem em vez de apagá-los.
+          const dadosLocaisExistentes = coletarDadosLocais();
+          if (Object.keys(dadosLocaisExistentes).length > 0) {
+            dadosLocaisExistentes.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            db.collection('usuarios').doc(usuario.uid).set(dadosLocaisExistentes, { merge: true }).catch(() => {});
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Erro ao buscar dados na nuvem, continuando com os dados deste aparelho:', err);
+      })
+      .finally(() => {
+        iniciarAppPrincipal();
+      });
+  });
+
+</script>
+
+<!-- O script abaixo é o app inteiro, mas fica "inerte" (type="text/plain",
+     o navegador não executa) até o login ser confirmado e os dados da nuvem
+     serem carregados no localStorage. Só então ele é injetado e executado
+     de verdade pela função iniciarAppPrincipal() acima. -->
+<script type="text/plain" id="app-main-script">
   /* ============================================================ */
   /* ============  MOTOR DE ESTATÍSTICAS / CONQUISTAS  =========== */
   /* ============================================================ */
@@ -2927,7 +3357,7 @@
       <!-- Perna/Glúteo -->
       <a class="muscle-button" data-muscle-id="pernas">
         <div class="muscle-info-wrapper">
-          <span class="muscle-name">Pernas e <br>Glúteos</span>
+          <span class="muscle-name">Perna/<br>Glúteo</span>
         </div>
         <div class="muscle-right-side">
           <div class="muscle-graphic">
@@ -5917,8 +6347,15 @@
         <button class="close-modal-btn" id="close-settings-modal-btn">&times;</button>
       </div>
       <p style="color: var(--text-dim); font-size: 13.5px; line-height: 1.5; margin-bottom: 18px;">
-        Gerencie os dados salvos deste aplicativo neste aparelho.
+        Gerencie sua conta e os dados salvos deste aplicativo.
       </p>
+      <div style="border: 1px solid var(--border); background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+        <p style="color: var(--text-dim); font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Conta conectada</p>
+        <p style="color: var(--text); font-size: 14px; margin-bottom: 14px;" id="display-account-email">—</p>
+        <button type="button" class="save-btn" id="open-logout-confirm-btn" style="background:#252932; color: var(--text); margin-top:0;">
+          Sair da conta
+        </button>
+      </div>
       <div style="border: 1px solid rgba(255,75,75,0.3); background: rgba(255,75,75,0.08); border-radius: 12px; padding: 16px;">
         <p style="color: #FF8585; font-size: 13px; font-weight: 700; margin-bottom: 6px;">Zona de risco</p>
         <p style="color: var(--text-dim); font-size: 13px; line-height: 1.5; margin-bottom: 14px;">
@@ -6130,7 +6567,11 @@
     localStorage.removeItem('custom_muscles');
     localStorage.removeItem('workout_history_db');
     localStorage.removeItem('workout_last_date');
-    location.reload();
+    if (window.limparDadosNaNuvem) {
+      window.limparDadosNaNuvem().finally(() => location.reload());
+    } else {
+      location.reload();
+    }
   });
 
   openWeightModalBtn.addEventListener('click', () => {
