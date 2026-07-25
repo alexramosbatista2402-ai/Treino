@@ -6558,5 +6558,31 @@
   carregarTelaInicio(document.getElementById('main-content'));
 </script>
 
+<!-- Verificação automática de atualização via GitHub -->
+<script>
+(function verificarAtualizacaoApp() {
+  const URL_VERSAO = 'https://raw.githubusercontent.com/alexramosbatista2402-ai/Treino/main/version.json';
+
+  fetch(`${URL_VERSAO}?t=${Date.now()}`, { cache: 'no-store' })
+    .then(res => res.json())
+    .then(dados => {
+      const versaoRemota = String(dados.v);
+      const versaoLocal = localStorage.getItem('appVersion');
+
+      if (!versaoLocal) {
+        // primeira vez que abre, só guarda a versão atual
+        localStorage.setItem('appVersion', versaoRemota);
+        return;
+      }
+
+      if (versaoRemota !== versaoLocal) {
+        localStorage.setItem('appVersion', versaoRemota);
+        location.reload(true); // recarrega e busca o index.html novo do GitHub Pages
+      }
+    })
+    .catch(() => {}); // se falhar (sem internet, etc), simplesmente ignora
+})();
+</script>
+
 </body>
 </html>
