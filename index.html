@@ -1706,6 +1706,7 @@
     margin-bottom: 28px;
     line-height: 1.5;
   }
+  .auth-field.hidden{ display: none; }
   .auth-field{
     margin-bottom: 14px;
   }
@@ -1728,6 +1729,32 @@
     outline: none;
   }
   .auth-field input:focus{ border-color: var(--amber); }
+  .auth-password-wrap{
+    position: relative;
+  }
+  .auth-password-wrap input{
+    padding-right: 44px;
+  }
+  .auth-eye-btn{
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text-dim);
+  }
+  .auth-eye-btn svg{ width: 20px; height: 20px; }
+  .auth-eye-btn .eye-off{ display: none; }
+  .auth-eye-btn.showing .eye{ display: none; }
+  .auth-eye-btn.showing .eye-off{ display: block; }
   .auth-submit-btn{
     width: 100%;
     background: var(--amber);
@@ -1824,11 +1851,23 @@
     </div>
     <div class="auth-field">
       <label for="auth-password">Senha</label>
-      <input type="password" id="auth-password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+      <div class="auth-password-wrap">
+        <input type="password" id="auth-password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+        <button type="button" class="auth-eye-btn" id="auth-password-eye" aria-label="Mostrar senha">
+          <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.3 20.3 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a20.3 20.3 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
     </div>
     <div class="auth-field hidden" id="auth-confirm-field">
       <label for="auth-password-confirm">Confirmar senha</label>
-      <input type="password" id="auth-password-confirm" autocomplete="new-password" placeholder="Repita a senha" minlength="6">
+      <div class="auth-password-wrap">
+        <input type="password" id="auth-password-confirm" autocomplete="new-password" placeholder="Repita a senha" minlength="6">
+        <button type="button" class="auth-eye-btn" id="auth-password-confirm-eye" aria-label="Mostrar senha">
+          <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.3 20.3 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a20.3 20.3 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
     </div>
     <button type="submit" class="auth-submit-btn" id="auth-submit-btn">Entrar</button>
   </form>
@@ -1988,6 +2027,19 @@
   const authToggleText = document.getElementById('auth-toggle-text');
   const authSubtitleEl = document.getElementById('auth-subtitle');
   const authForgotLink = document.getElementById('auth-forgot-link');
+
+  function configurarOlhoSenha(botaoId, inputEl) {
+    const botao = document.getElementById(botaoId);
+    if (!botao || !inputEl) return;
+    botao.addEventListener('click', () => {
+      const mostrando = inputEl.type === 'text';
+      inputEl.type = mostrando ? 'password' : 'text';
+      botao.classList.toggle('showing', !mostrando);
+      botao.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha');
+    });
+  }
+  configurarOlhoSenha('auth-password-eye', authPasswordInput);
+  configurarOlhoSenha('auth-password-confirm-eye', authConfirmInput);
 
   let modoCadastro = false;
   let appJaIniciado = false;
