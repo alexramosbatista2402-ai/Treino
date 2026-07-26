@@ -211,6 +211,13 @@
     filter: drop-shadow(0px 6px 16px rgba(255, 122, 61, 0.4));
   }
 
+  .achievement-unlock-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
   .achievement-unlock-title {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 22px;
@@ -1095,8 +1102,8 @@
 #tela-conquistas .status-container-wrapper {
     position: relative;
     display: inline-block;
-    width: 68px;
-    height: 74px;
+    width: 118px;
+    height: 118px;
   }
 #tela-conquistas .badge-icon-container {
     width: 100%;
@@ -1108,6 +1115,8 @@
 #tela-conquistas .medal-badge {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.35));
     transition: filter 0.4s ease;
   }
@@ -1164,7 +1173,10 @@
     box-shadow: 0px 4px 20px rgba(255, 122, 61, 0.1);
   }
 #tela-conquistas .achievement-card.unlocked .status-indicator {
-    background: #22C55E;
+    display: none;
+  }
+#tela-conquistas .achievement-card {
+    cursor: pointer;
   }
 #tela-conquistas .achievement-card.unlocked h3 {
     color: var(--text);
@@ -1222,6 +1234,90 @@
   }
 #tela-conquistas .achievement-card.locked .progress-text {
     color: #55575C;
+  }
+
+  /* ============= MODAL: DETALHES DA CONQUISTA ============= */
+#tela-conquistas .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+#tela-conquistas .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+#tela-conquistas .modal-card {
+    position: relative;
+    background: var(--surface);
+    border: 1.5px solid rgba(255, 122, 61, 0.2);
+    border-radius: 24px;
+    padding: 32px 24px 26px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+#tela-conquistas .modal-overlay.active .modal-card {
+    transform: translateY(0);
+  }
+#tela-conquistas .close-modal-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+#tela-conquistas .achievement-detail-badge {
+    width: 140px;
+    height: 140px;
+    margin: 4px auto 20px;
+  }
+#tela-conquistas .achievement-detail-badge .medal-badge {
+    border-radius: 20px;
+  }
+#tela-conquistas .achievement-detail-badge.locked .medal-badge {
+    filter: grayscale(1) brightness(0.55) contrast(1.05) drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.35));
+  }
+#tela-conquistas #achievementDetailTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+#tela-conquistas #achievementDetailDesc {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+#tela-conquistas .achievement-detail-date {
+    margin-top: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #22C55E;
+    display: none;
   }
 
 
@@ -1944,27 +2040,7 @@
     <div class="achievement-unlock-card">
       <div class="achievement-unlock-eyebrow">Conquista desbloqueada!</div>
       <div class="achievement-unlock-badge">
-        <svg viewBox="0 0 100 108" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="unlockRimGold" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFE1A8"/>
-              <stop offset="100%" stop-color="#D98A2B"/>
-            </linearGradient>
-            <linearGradient id="unlockFaceGold" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFD37A"/>
-              <stop offset="100%" stop-color="#F0A93A"/>
-            </linearGradient>
-          </defs>
-          <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#FF7A3D" />
-          <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C4571F" />
-          <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-          <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-          <circle cx="50" cy="68" r="34" fill="url(#unlockRimGold)" />
-          <circle cx="50" cy="68" r="27.5" fill="url(#unlockFaceGold)" />
-          <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-          <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" />
-          <path d="M38 68 L46 76 L64 58" fill="none" stroke="#7a4a10" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <img id="achievementUnlockImg" src="" alt="Conquista">
       </div>
       <div class="achievement-unlock-title" id="achievementUnlockTitle">Conquista</div>
       <div class="achievement-unlock-desc" id="achievementUnlockDesc">Descrição da conquista</div>
@@ -2405,6 +2481,21 @@
     return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
   }
 
+  // Procura em qual data uma conquista específica foi desbloqueada
+  function obterDataDesbloqueioConquista(id, stats) {
+    if (!stats.conquistasPorData) return null;
+    for (const data in stats.conquistasPorData) {
+      if (stats.conquistasPorData[data].includes(id)) return data;
+    }
+    return null;
+  }
+
+  // Converte 'YYYY-MM-DD' para 'DD/MM/AAAA'
+  function formatarDataBR(dataStr) {
+    const [ano, mes, dia] = dataStr.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
   // Chamado sempre que uma nova foto de evolução é salva na tela de Perfil
   function registrarFotoEvolucao(tipoFoto) {
     const stats = getStats();
@@ -2557,13 +2648,60 @@
     return ganhos;
   }
 
+  // Local ÚNICO onde você coloca o link da foto de cada conquista.
+  // Essa mesma foto é usada no card da grade e na animação de desbloqueio.
+  const ACHIEVEMENT_IMAGES = {
+    'perder-1kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__perder-1kg',
+    'perder-3kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__perder-3kg',
+    'perder-5kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__perder-5kg',
+    'perder-7kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__perder-7kg',
+    'perder-10kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__perder-10kg',
+    'ganhar-1kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-1kg',
+    'ganhar-3kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-3kg',
+    'ganhar-5kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-5kg',
+    'ganhar-7kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-7kg',
+    'ganhar-10kg': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-10kg',
+    'primeiro-treino': 'COLOQUE_AQUI_O_LINK_DA_FOTO__primeiro-treino',
+    '7-dias-treino': 'COLOQUE_AQUI_O_LINK_DA_FOTO__7-dias-treino',
+    'semana-cheia': 'COLOQUE_AQUI_O_LINK_DA_FOTO__semana-cheia',
+    '50-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__50-exercicios',
+    '100-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__100-exercicios',
+    '250-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__250-exercicios',
+    '500-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__500-exercicios',
+    '1000-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__1000-exercicios',
+    'monstro-peito': 'COLOQUE_AQUI_O_LINK_DA_FOTO__monstro-peito',
+    'asas-anjo': 'COLOQUE_AQUI_O_LINK_DA_FOTO__asas-anjo',
+    'pico-biceps': 'COLOQUE_AQUI_O_LINK_DA_FOTO__pico-biceps',
+    'ferradura-triceps': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ferradura-triceps',
+    'ombros-escudo': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ombros-escudo',
+    'pernas-aco': 'COLOQUE_AQUI_O_LINK_DA_FOTO__pernas-aco',
+    'mes-1': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-1',
+    'mes-2': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-2',
+    'mes-3': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-3',
+    'mes-4': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-4',
+    'mes-5': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-5',
+    'mes-6': 'COLOQUE_AQUI_O_LINK_DA_FOTO__mes-6',
+    'ano-1': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ano-1',
+    'carga-primeira-vez': 'COLOQUE_AQUI_O_LINK_DA_FOTO__carga-primeira-vez',
+    'carga-5-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__carga-5-exercicios',
+    'carga-10-exercicios': 'COLOQUE_AQUI_O_LINK_DA_FOTO__carga-10-exercicios',
+    'semana-total-mes': 'COLOQUE_AQUI_O_LINK_DA_FOTO__semana-total-mes',
+    'primeira-evolucao': 'COLOQUE_AQUI_O_LINK_DA_FOTO__primeira-evolucao',
+    'ganho-1cm-todos': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganho-1cm-todos',
+    'ganho-3cm-3musculos': 'COLOQUE_AQUI_O_LINK_DA_FOTO__ganho-3cm-3musculos',
+  };
+
   const ACHIEVEMENTS_CONFIG = {
     'perder-1kg': { tipo: 'peso_perdido', meta: 1, unidade: 'kg' },
+    'perder-3kg': { tipo: 'peso_perdido', meta: 3, unidade: 'kg' },
     'perder-5kg': { tipo: 'peso_perdido', meta: 5, unidade: 'kg' },
+    'perder-7kg': { tipo: 'peso_perdido', meta: 7, unidade: 'kg' },
     'perder-10kg': { tipo: 'peso_perdido', meta: 10, unidade: 'kg' },
     'ganhar-1kg': { tipo: 'peso_ganho', meta: 1, unidade: 'kg' },
     'ganhar-3kg': { tipo: 'peso_ganho', meta: 3, unidade: 'kg' },
     'ganhar-5kg': { tipo: 'peso_ganho', meta: 5, unidade: 'kg' },
+    'ganhar-7kg': { tipo: 'peso_ganho', meta: 7, unidade: 'kg' },
+    'ganhar-10kg': { tipo: 'peso_ganho', meta: 10, unidade: 'kg' },
     'primeiro-treino': { tipo: 'exercicios_total', meta: 1 },
     '7-dias-treino': { tipo: 'dias_treinados', meta: 7 },
     'semana-cheia': { tipo: 'dias_consecutivos', meta: 7 },
@@ -2597,11 +2735,15 @@
   // Título e descrição de cada conquista, usados no modal de parabenização
   const ACHIEVEMENT_LABELS = {
     'perder-1kg': { titulo: 'Perdeu 1 kg', desc: 'Foco na queima!' },
+    'perder-3kg': { titulo: 'Perdeu 3 kg', desc: 'Resultado surgindo' },
     'perder-5kg': { titulo: 'Perdeu 5 kg', desc: 'Consistência pura' },
+    'perder-7kg': { titulo: 'Perdeu 7 kg', desc: 'Virada de chave' },
     'perder-10kg': { titulo: 'Perdeu 10 kg', desc: 'Transformação real' },
     'ganhar-1kg': { titulo: 'Ganhou 1 kg', desc: 'Construindo massa' },
     'ganhar-3kg': { titulo: 'Ganhou 3 kg', desc: 'Evolução constante' },
     'ganhar-5kg': { titulo: 'Ganhou 5 kg', desc: 'Nível hipertrofia' },
+    'ganhar-7kg': { titulo: 'Ganhou 7 kg', desc: 'Ganho sólido' },
+    'ganhar-10kg': { titulo: 'Ganhou 10 kg', desc: 'Marca de elite' },
     'primeiro-treino': { titulo: 'Primeiro treino', desc: '1º exercício concluído' },
     '7-dias-treino': { titulo: '7 dias de treino', desc: '7 dias de treino concluídos' },
     'semana-cheia': { titulo: 'Semana Cheia', desc: 'Treinou todos os dias seguidos' },
@@ -2676,6 +2818,8 @@
     const info = ACHIEVEMENT_LABELS[id] || { titulo: 'Conquista desbloqueada', desc: '' };
     document.getElementById('achievementUnlockTitle').textContent = info.titulo;
     document.getElementById('achievementUnlockDesc').textContent = info.desc;
+    const unlockImg = document.getElementById('achievementUnlockImg');
+    if (unlockImg && ACHIEVEMENT_IMAGES[id]) unlockImg.src = ACHIEVEMENT_IMAGES[id];
     overlay.classList.add('active');
   }
 
@@ -2756,6 +2900,11 @@
       card.classList.toggle('unlocked', atingiu);
       card.classList.toggle('locked', !atingiu);
 
+      const img = card.querySelector('.medal-badge');
+      if (img && ACHIEVEMENT_IMAGES[id]) img.src = ACHIEVEMENT_IMAGES[id];
+
+      card.onclick = () => abrirDetalheConquista(id);
+
       const bar = card.querySelector('.progress-bar');
       const text = card.querySelector('.progress-text');
       const pct = Math.min(100, Math.round((atual / cfg.meta) * 100));
@@ -2771,6 +2920,59 @@
         text.textContent = `${atualFormatado} / ${metaFormatada}${sufixo ? ' ' + sufixo : ''}`;
       }
     });
+
+    // Liga o botão de fechar do modal de detalhes (recriado a cada renderização da tela)
+    const closeDetailBtn = document.getElementById('closeAchievementDetailBtn');
+    const detailOverlay = document.getElementById('achievementDetailOverlay');
+    if (closeDetailBtn && detailOverlay) {
+      closeDetailBtn.onclick = () => detailOverlay.classList.remove('active');
+      detailOverlay.onclick = (e) => { if (e.target === detailOverlay) detailOverlay.classList.remove('active'); };
+    }
+  }
+
+  // Abre o modal com os detalhes de uma conquista (bloqueada ou desbloqueada)
+  function abrirDetalheConquista(id) {
+    const card = document.querySelector(`#tela-conquistas .achievement-card[data-achievement="${id}"]`);
+    if (!card) return;
+    const info = ACHIEVEMENT_LABELS[id] || { titulo: '', desc: '' };
+    const atingiu = card.classList.contains('unlocked');
+
+    const img = document.getElementById('achievementDetailImg');
+    if (img) img.src = ACHIEVEMENT_IMAGES[id] || '';
+
+    document.getElementById('achievementDetailTitle').textContent = info.titulo;
+    document.getElementById('achievementDetailDesc').textContent = info.desc;
+
+    const badgeWrap = document.getElementById('achievementDetailBadgeWrap');
+    if (badgeWrap) badgeWrap.classList.toggle('locked', !atingiu);
+
+    const cardBar = card.querySelector('.progress-bar');
+    const cardText = card.querySelector('.progress-text');
+    const bar = document.getElementById('achievementDetailBar');
+    if (bar) {
+      bar.style.width = cardBar ? cardBar.style.width : '0%';
+      bar.style.background = atingiu ? '#22C55E' : 'var(--amber)';
+    }
+    const progressText = document.getElementById('achievementDetailProgressText');
+    if (progressText) {
+      progressText.textContent = cardText ? cardText.textContent : '';
+      progressText.style.color = atingiu ? 'rgba(34, 197, 94, 0.7)' : '#55575C';
+    }
+
+    const dateEl = document.getElementById('achievementDetailDate');
+    if (dateEl) {
+      if (atingiu) {
+        const stats = getStats();
+        const dataStr = obterDataDesbloqueioConquista(id, stats);
+        dateEl.textContent = dataStr ? `Desbloqueada em ${formatarDataBR(dataStr)}` : 'Conquista desbloqueada';
+        dateEl.style.display = 'block';
+      } else {
+        dateEl.style.display = 'none';
+      }
+    }
+
+    const overlay = document.getElementById('achievementDetailOverlay');
+    if (overlay) overlay.classList.add('active');
   }
 
   /* ============================================================ */
@@ -2796,6 +2998,7 @@
       mesFinalIndex: null,
       dataMetaSalvaFormatada: null,
       registrosPesosHistorico: {},
+      historicoPesosDetalhado: [],
       historicoDeMedidasRegistradas: [],
       fotos: {}
     };
@@ -2804,6 +3007,7 @@
       if (!salvo) return defaults;
       return Object.assign({}, defaults, salvo, {
         registrosPesosHistorico: salvo.registrosPesosHistorico || {},
+        historicoPesosDetalhado: Array.isArray(salvo.historicoPesosDetalhado) ? salvo.historicoPesosDetalhado : [],
         historicoDeMedidasRegistradas: Array.isArray(salvo.historicoDeMedidasRegistradas) ? salvo.historicoDeMedidasRegistradas : [],
         fotos: salvo.fotos || {}
       });
@@ -3677,7 +3881,7 @@
       </div>
       <div class="form-row">
         <div class="form-group"><label>Peso</label><input type="text" id="inputWeight"></div>
-        <div class="form-group"><label>Descanso (s)</label><input type="number" id="inputRest"></div>
+        <div class="form-group"><label>Descanso (min)</label><input type="number" id="inputRest" step="0.5" min="0"></div>
       </div>
       <div class="form-group" id="containerInputVideoLink">
         <label>Foto do exercício</label>
@@ -4191,7 +4395,7 @@
     inputSériesTotal.value = ex.series; 
     inputReps.value = ex.reps; 
     inputWeight.value = ex.weight; 
-    inputRest.value = ex.rest; 
+    inputRest.value = Math.round((ex.rest / 60) * 100) / 100; 
     fotoExercicioSelecionada = null;
     inputExercisePhoto.value = "";
     if (ex.image) { exercisePhotoPreview.src = ex.image; exercisePhotoPreview.style.display = 'block'; }
@@ -4220,7 +4424,7 @@
     inputSériesTotal.value="3"; 
     inputReps.value="12"; 
     inputWeight.value="0"; 
-    inputRest.value="90"; 
+    inputRest.value="1.5"; 
     fotoExercicioSelecionada = null;
     inputExercisePhoto.value = "";
     exercisePhotoPreview.style.display = 'none';
@@ -4249,7 +4453,7 @@
         const novoPesoStr = inputWeight.value.trim() || "0";
         const novoPesoNum = parseFloat(novoPesoStr.replace(',', '.'));
         ex.weight = novoPesoStr; 
-        ex.rest = parseInt(inputRest.value) || 90; 
+        ex.rest = Math.round((parseFloat(inputRest.value.replace(',', '.')) || 1.5) * 60); 
         ex.image = fotoExercicioSelecionada || ex.image;
         if (!isNaN(pesoAnteriorNum) && !isNaN(novoPesoNum) && novoPesoNum !== pesoAnteriorNum) {
           if (ex.pesoJaFoiAlterado) {
@@ -4267,7 +4471,7 @@
     } else {
       const nameVal = inputName.value.trim() || "Exercício";
       const uid = `ex-${Date.now()}`;
-      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 12, weight: inputWeight.value.trim() || "0", rest: parseInt(inputRest.value) || 90, image: fotoExercicioSelecionada || "", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
+      workoutDatabase.push({ id: uid, name: nameVal, variation: inputVariation.value.trim(), series: parseInt(inputSériesTotal.value) || 3, reps: parseInt(inputReps.value) || 12, weight: inputWeight.value.trim() || "0", rest: Math.round((parseFloat(inputRest.value.replace(',', '.')) || 1.5) * 60), image: fotoExercicioSelecionada || "", isFavorite: false, completedToday: false, muscle: activeMuscleGroup });
       activeExerciseId = uid;
     }
     saveDatabase(); renderExercises(); loadExerciseToDetail(activeExerciseId); modalOverlay.classList.remove('active');
@@ -4353,30 +4557,7 @@
       <div class="achievement-card locked" data-achievement="perder-1kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3CB043" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#1E7A2E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">-1KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__perder-1kg" alt="perder-1kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4385,7 +4566,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Perdeu 1 kg</h3>
           <p>Foco na queima!</p>
         </div>
         <div class="progress-wrapper">
@@ -4396,34 +4576,11 @@
         </div>
       </div>
 
-      <!-- CARD 2: PERDEU 5 KG -->
-      <div class="achievement-card locked" data-achievement="perder-5kg">
+      <!-- CARD 1B: PERDEU 3 KG -->
+      <div class="achievement-card locked" data-achievement="perder-3kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3CB043" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#1E7A2E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">-5KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__perder-3kg" alt="perder-3kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4432,7 +4589,29 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Perdeu 5 kg</h3>
+          <p>Resultado surgindo</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 3 kg</div>
+        </div>
+      </div>
+
+      <!-- CARD 2: PERDEU 5 KG -->
+      <div class="achievement-card locked" data-achievement="perder-5kg">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__perder-5kg" alt="perder-5kg">
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
           <p>Consistência pura</p>
         </div>
         <div class="progress-wrapper">
@@ -4443,34 +4622,11 @@
         </div>
       </div>
 
-      <!-- CARD 3: PERDEU 10 KG -->
-      <div class="achievement-card locked" data-achievement="perder-10kg">
+      <!-- CARD 2B: PERDEU 7 KG -->
+      <div class="achievement-card locked" data-achievement="perder-7kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3CB043" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#1E7A2E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">-10KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__perder-7kg" alt="perder-7kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4479,7 +4635,29 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Perdeu 10 kg</h3>
+          <p>Virada de chave</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 7 kg</div>
+        </div>
+      </div>
+
+      <!-- CARD 3: PERDEU 10 KG -->
+      <div class="achievement-card locked" data-achievement="perder-10kg">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__perder-10kg" alt="perder-10kg">
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
           <p>Transformação real</p>
         </div>
         <div class="progress-wrapper">
@@ -4494,30 +4672,7 @@
       <div class="achievement-card locked" data-achievement="ganhar-1kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">+1KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-1kg" alt="ganhar-1kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4526,7 +4681,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ganhou 1 kg</h3>
           <p>Construindo massa</p>
         </div>
         <div class="progress-wrapper">
@@ -4541,30 +4695,7 @@
       <div class="achievement-card locked" data-achievement="ganhar-3kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">+3KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-3kg" alt="ganhar-3kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4573,7 +4704,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ganhou 3 kg</h3>
           <p>Evolução constante</p>
         </div>
         <div class="progress-wrapper">
@@ -4588,30 +4718,7 @@
       <div class="achievement-card locked" data-achievement="ganhar-5kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">+5KG</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-5kg" alt="ganhar-5kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4620,7 +4727,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ganhou 5 kg</h3>
           <p>Nível hipertrofia</p>
         </div>
         <div class="progress-wrapper">
@@ -4631,40 +4737,11 @@
         </div>
       </div>
 
-      <!-- CARD 7: PRIMEIRO TREINO -->
-      <div class="achievement-card locked" data-achievement="primeiro-treino">
+      <!-- CARD 6B: GANHOU 7 KG -->
+      <div class="achievement-card locked" data-achievement="ganhar-7kg">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-7kg" alt="ganhar-7kg">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4673,7 +4750,52 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Primeiro treino</h3>
+          <p>Ganho sólido</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 7 kg</div>
+        </div>
+      </div>
+
+      <!-- CARD 6C: GANHOU 10 KG -->
+      <div class="achievement-card locked" data-achievement="ganhar-10kg">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganhar-10kg" alt="ganhar-10kg">
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
+          <p>Marca de elite</p>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text">0 / 10 kg</div>
+        </div>
+      </div>
+
+      <!-- CARD 7: PRIMEIRO TREINO -->
+      <div class="achievement-card locked" data-achievement="primeiro-treino">
+        <div class="status-container-wrapper">
+          <div class="badge-icon-container">
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__primeiro-treino" alt="primeiro-treino">
+          </div>
+          <div class="status-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="achievement-info">
           <p>1º exercício concluído</p>
         </div>
         <div class="progress-wrapper">
@@ -4688,30 +4810,7 @@
       <div class="achievement-card locked" data-achievement="7-dias-treino">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3CB043" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#1E7A2E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <text x="50" y="60" font-family="Space Grotesk, sans-serif" font-size="26" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">7</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__7-dias-treino" alt="7-dias-treino">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4720,7 +4819,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>7 dias de treino</h3>
           <p>7 dias de treino concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -4735,30 +4833,7 @@
       <div class="achievement-card locked" data-achievement="semana-cheia">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-50,-50.5)"><path d="M50 20C35 41 33 52 33 63C33 74.5 40.5 81 50 81C59.5 81 67 74.5 67 63C67 47 50 20 50 20ZM48 40C52 49 57 55 57 65C57 69.5 54 73 49.5 73C45 73 42 69.5 42 63C42 54 48 40 48 40Z" fill="#33353a" /></g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__semana-cheia" alt="semana-cheia">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4767,7 +4842,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Semana Cheia</h3>
           <p>Treinou todos os dias seguidos</p>
         </div>
         <div class="progress-wrapper">
@@ -4782,36 +4856,7 @@
       <div class="achievement-card locked" data-achievement="50-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g><text x="50" y="83" font-family="Space Grotesk, sans-serif" font-size="10.5" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">50</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__50-exercicios" alt="50-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4820,7 +4865,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>50 exercícios</h3>
           <p>50 concluídos no app</p>
         </div>
         <div class="progress-wrapper">
@@ -4835,36 +4879,7 @@
       <div class="achievement-card locked" data-achievement="100-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g><text x="50" y="83" font-family="Space Grotesk, sans-serif" font-size="10.5" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">100</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__100-exercicios" alt="100-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4873,7 +4888,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>100 exercícios</h3>
           <p>100 concluídos no app</p>
         </div>
         <div class="progress-wrapper">
@@ -4888,36 +4902,7 @@
       <div class="achievement-card locked" data-achievement="250-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g><text x="50" y="83" font-family="Space Grotesk, sans-serif" font-size="10.5" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">250</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__250-exercicios" alt="250-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4926,7 +4911,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>250 exercícios</h3>
           <p>250 concluídos no app</p>
         </div>
         <div class="progress-wrapper">
@@ -4941,36 +4925,7 @@
       <div class="achievement-card locked" data-achievement="500-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g><text x="50" y="83" font-family="Space Grotesk, sans-serif" font-size="10.5" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">500</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__500-exercicios" alt="500-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -4979,7 +4934,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>500 exercícios</h3>
           <p>500 concluídos no app</p>
         </div>
         <div class="progress-wrapper">
@@ -4994,36 +4948,7 @@
       <div class="achievement-card locked" data-achievement="1000-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(1.0) translate(-50,-50)">
-                <rect x="30" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="63" y="43" width="7" height="14" rx="2" fill="#33353a" />
-                <rect x="25" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="71" y="46" width="4" height="8" rx="1.5" fill="#33353a" />
-                <rect x="38" y="47.5" width="24" height="5" rx="2.5" fill="#33353a" />
-              </g><text x="50" y="83" font-family="Space Grotesk, sans-serif" font-size="10.5" font-weight="700" fill="#33353a" text-anchor="middle" dominant-baseline="central">1000</text>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__1000-exercicios" alt="1000-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5032,7 +4957,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>1.000 exercícios</h3>
           <p>1.000 concluídos no app</p>
         </div>
         <div class="progress-wrapper">
@@ -5047,42 +4971,7 @@
       <div class="achievement-card locked" data-achievement="monstro-peito">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__monstro-peito" alt="monstro-peito">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5091,7 +4980,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Monstro do Peito</h3>
           <p>100 exerc. de peito concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5106,42 +4994,7 @@
       <div class="achievement-card locked" data-achievement="asas-anjo">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__asas-anjo" alt="asas-anjo">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5150,7 +5003,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Asas de Anjo</h3>
           <p>100 exerc. de costas concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5165,42 +5017,7 @@
       <div class="achievement-card locked" data-achievement="pico-biceps">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__pico-biceps" alt="pico-biceps">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5209,7 +5026,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Pico do Bíceps</h3>
           <p>100 exerc. de bíceps concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5224,42 +5040,7 @@
       <div class="achievement-card locked" data-achievement="ferradura-triceps">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ferradura-triceps" alt="ferradura-triceps">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5268,7 +5049,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ferradura de Tríceps</h3>
           <p>100 exerc. de tríceps concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5283,42 +5063,7 @@
       <div class="achievement-card locked" data-achievement="ombros-escudo">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ombros-escudo" alt="ombros-escudo">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5327,7 +5072,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ombros de Escudo</h3>
           <p>100 exerc. de ombro concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5342,42 +5086,7 @@
       <div class="achievement-card locked" data-achievement="pernas-aco">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F5A623" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C97A0E" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.5) translate(-48,-53)">
-                <rect x="3" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <rect x="15" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="25" y="50" width="50" height="10" rx="5" fill="#33353a" />
-                <rect x="75" y="42" width="10" height="26" rx="3" fill="#33353a" />
-                <rect x="85" y="34" width="12" height="42" rx="4" fill="#33353a" />
-                <ellipse cx="33" cy="47" rx="9" ry="7" transform="rotate(-25 33 47)" fill="#33353a" />
-                <rect x="36" y="32" width="28" height="24" rx="12" fill="#33353a" />
-                <circle cx="40" cy="30" r="6" fill="#33353a" />
-                <circle cx="47" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="54" cy="28" r="6.5" fill="#33353a" />
-                <circle cx="61" cy="30" r="6" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__pernas-aco" alt="pernas-aco">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5386,7 +5095,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Pernas de Aço</h3>
           <p>100 exerc. de perna concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5401,37 +5109,7 @@
       <div class="achievement-card locked" data-achievement="mes-1">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-1" alt="mes-1">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5440,7 +5118,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>1° mês de treino</h3>
           <p>30 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5455,37 +5132,7 @@
       <div class="achievement-card locked" data-achievement="mes-2">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-2" alt="mes-2">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5494,7 +5141,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>2 meses de treinos</h3>
           <p>60 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5509,37 +5155,7 @@
       <div class="achievement-card locked" data-achievement="mes-3">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-3" alt="mes-3">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5548,7 +5164,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>3 meses de treinos</h3>
           <p>90 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5563,37 +5178,7 @@
       <div class="achievement-card locked" data-achievement="mes-4">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-4" alt="mes-4">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5602,7 +5187,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>4 meses de treinos</h3>
           <p>120 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5617,37 +5201,7 @@
       <div class="achievement-card locked" data-achievement="mes-5">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-5" alt="mes-5">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5656,7 +5210,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>5 meses de treinos</h3>
           <p>150 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5671,37 +5224,7 @@
       <div class="achievement-card locked" data-achievement="mes-6">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#9B5DE0" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#6B32A8" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.85) translate(-50,-47)">
-                <rect x="35" y="34" width="30" height="26" rx="4" fill="none" stroke="#33353a" stroke-width="4" />
-                <path d="M35 43h30" stroke="#33353a" stroke-width="4" />
-                <path d="M42 29v9M58 29v9" stroke="#33353a" stroke-width="4" stroke-linecap="round" />
-                <circle cx="42" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="50" cy="51.5" r="2" fill="#33353a" />
-                <circle cx="58" cy="51.5" r="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__mes-6" alt="mes-6">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5710,7 +5233,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>6 meses de treinos</h3>
           <p>180 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5725,33 +5247,7 @@
       <div class="achievement-card locked" data-achievement="ano-1">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F2C744" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C99A12" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,60) scale(0.62) translate(-50,-51)">
-                <path d="M32 62 L28 40 L40 50 L50 32 L60 50 L72 40 L68 62 Z" fill="#33353a" stroke="#33353a" stroke-width="2" stroke-linejoin="round" />
-                <rect x="31" y="62" width="38" height="7" rx="2" fill="#33353a" />
-              </g>
-              <ellipse cx="65.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(-30.0 65.0 91.4)" />
-              <ellipse cx="66.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(-19.0 66.0 88.3)" />
-              <ellipse cx="65.4" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(-8.0 65.4 85.3)" />
-              <ellipse cx="63.3" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(3.0 63.3 82.5)" />
-              <ellipse cx="59.9" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(14.0 59.9 80.2)" />
-              <ellipse cx="55.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(25.0 55.5 78.7)" />
-              <ellipse cx="35.0" cy="91.4" rx="7.0" ry="3.4" fill="#7c7f85" transform="rotate(30.0 35.0 91.4)" />
-              <ellipse cx="34.0" cy="88.3" rx="6.4" ry="3.2" fill="#7c7f85" transform="rotate(19.0 34.0 88.3)" />
-              <ellipse cx="34.6" cy="85.3" rx="5.8" ry="2.9" fill="#7c7f85" transform="rotate(8.0 34.6 85.3)" />
-              <ellipse cx="36.7" cy="82.5" rx="5.2" ry="2.7" fill="#7c7f85" transform="rotate(-3.0 36.7 82.5)" />
-              <ellipse cx="40.1" cy="80.2" rx="4.6" ry="2.4" fill="#7c7f85" transform="rotate(-14.0 40.1 80.2)" />
-              <ellipse cx="44.5" cy="78.7" rx="4.0" ry="2.2" fill="#7c7f85" transform="rotate(-25.0 44.5 78.7)" />
-              <polygon points="50.0,91.8 51.0,94.6 54.0,94.7 51.7,96.5 52.5,99.4 50.0,97.8 47.5,99.4 48.3,96.5 46.0,94.7 49.0,94.6" fill="#55575c" />
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ano-1" alt="ano-1">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5760,7 +5256,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>1 ano de treino</h3>
           <p>365 treinos concluídos</p>
         </div>
         <div class="progress-wrapper">
@@ -5776,24 +5271,7 @@
       <div class="achievement-card locked" data-achievement="carga-primeira-vez">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68) scale(1.15)">
-                <rect x="-24" y="-4" width="48" height="8" rx="2" fill="#33353a" />
-                <rect x="-24" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="18" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="-30" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <rect x="26" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <polygon points="0,-20 4,-12 -4,-12" fill="#33353a" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__carga-primeira-vez" alt="carga-primeira-vez">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5802,7 +5280,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Aumentou a carga pela primeira vez</h3>
           <p>O início da evolução de força</p>
         </div>
         <div class="progress-wrapper">
@@ -5816,24 +5293,7 @@
       <div class="achievement-card locked" data-achievement="carga-5-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68) scale(1.15)">
-                <rect x="-24" y="-4" width="48" height="8" rx="2" fill="#33353a" />
-                <rect x="-24" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="18" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="-30" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <rect x="26" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <polygon points="0,-20 4,-12 -4,-12" fill="#33353a" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__carga-5-exercicios" alt="carga-5-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5842,7 +5302,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Aumentou carga em 5 exercícios</h3>
           <p>Cargas cada vez mais pesadas</p>
         </div>
         <div class="progress-wrapper">
@@ -5857,24 +5316,7 @@
       <div class="achievement-card locked" data-achievement="carga-10-exercicios">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#3B82C4" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#215E8F" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68) scale(1.15)">
-                <rect x="-24" y="-4" width="48" height="8" rx="2" fill="#33353a" />
-                <rect x="-24" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="18" y="-11" width="6" height="22" rx="2" fill="#33353a" />
-                <rect x="-30" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <rect x="26" y="-8" width="4" height="16" rx="1.5" fill="#33353a" />
-                <polygon points="0,-20 4,-12 -4,-12" fill="#33353a" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__carga-10-exercicios" alt="carga-10-exercicios">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5883,7 +5325,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Aumentou a carga em 10 exercícios</h3>
           <p>Força em ascensão</p>
         </div>
         <div class="progress-wrapper">
@@ -5898,23 +5339,7 @@
       <div class="achievement-card locked" data-achievement="semana-total-mes">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F2C744" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#C99A12" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68)">
-                <rect x="-20" y="-16" width="40" height="32" rx="3" fill="none" stroke="#33353a" stroke-width="3.5" />
-                <line x1="-20" y1="-6" x2="20" y2="-6" stroke="#33353a" stroke-width="3.5" />
-                <line x1="-10" y1="-20" x2="-10" y2="-12" stroke="#33353a" stroke-width="3.5" stroke-linecap="round" />
-                <line x1="10" y1="-20" x2="10" y2="-12" stroke="#33353a" stroke-width="3.5" stroke-linecap="round" />
-                <path d="M-11 3 L-3 11 L13 -7" fill="none" stroke="#33353a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__semana-total-mes" alt="semana-total-mes">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5923,7 +5348,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Treinou todas as semanas do mês</h3>
           <p>Nenhuma semana ficou de fora</p>
         </div>
         <div class="progress-wrapper">
@@ -5938,21 +5362,7 @@
       <div class="achievement-card locked" data-achievement="primeira-evolucao">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#5CE1B2" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#2FA787" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68)">
-                <rect x="-19" y="-14" width="38" height="28" rx="3" fill="none" stroke="#33353a" stroke-width="3.5" />
-                <circle cx="-8" cy="-4" r="4.5" fill="none" stroke="#33353a" stroke-width="3" />
-                <path d="M-19 10 L-4 -2 L4 4 L11 -6 L19 4" fill="none" stroke="#33353a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__primeira-evolucao" alt="primeira-evolucao">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -5961,7 +5371,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Publicou sua primeira evolução</h3>
           <p>1ª foto de evolução enviada</p>
         </div>
         <div class="progress-wrapper">
@@ -5976,23 +5385,7 @@
       <div class="achievement-card locked" data-achievement="ganho-1cm-todos">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#A78BFA" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#7C5CD9" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68)">
-                <rect x="-22" y="-9" width="44" height="18" rx="4" fill="none" stroke="#33353a" stroke-width="3.5" />
-                <line x1="-13" y1="-9" x2="-13" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="-4" y1="-9" x2="-4" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="5" y1="-9" x2="5" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="14" y1="-9" x2="14" y2="-2" stroke="#33353a" stroke-width="2.5" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganho-1cm-todos" alt="ganho-1cm-todos">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -6001,7 +5394,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ganhou 1cm em todos os músculos</h3>
           <p>Evolução completa no corpo todo</p>
         </div>
         <div class="progress-wrapper">
@@ -6016,23 +5408,7 @@
       <div class="achievement-card locked" data-achievement="ganho-3cm-3musculos">
         <div class="status-container-wrapper">
           <div class="badge-icon-container">
-            <svg class="medal-badge" viewBox="0 0 100 108">
-              <path d="M30 2 L47 2 L56 32 L38 32 Z" fill="#F472B6" />
-              <path d="M70 2 L53 2 L44 32 L62 32 Z" fill="#BE4C82" />
-              <path d="M30 2 L47 2 L50 10 L34 10 Z" fill="#ffffff" opacity="0.18" />
-              <path d="M70 2 L53 2 L50 10 L66 10 Z" fill="#000000" opacity="0.12" />
-              <circle cx="50" cy="68" r="34" fill="url(#rim-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="url(#face-silver)" />
-              <circle cx="50" cy="68" r="27.5" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="1.5" />
-              <path d="M28 50 A32 32 0 0 1 62 24" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
-              <g transform="translate(50,68)">
-                <rect x="-22" y="-9" width="44" height="18" rx="4" fill="none" stroke="#33353a" stroke-width="3.5" />
-                <line x1="-13" y1="-9" x2="-13" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="-4" y1="-9" x2="-4" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="5" y1="-9" x2="5" y2="-2" stroke="#33353a" stroke-width="2.5" />
-                <line x1="14" y1="-9" x2="14" y2="-2" stroke="#33353a" stroke-width="2.5" />
-              </g>
-            </svg>
+            <img class="medal-badge" src="COLOQUE_AQUI_O_LINK_DA_FOTO__ganho-3cm-3musculos" alt="ganho-3cm-3musculos">
           </div>
           <div class="status-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -6041,7 +5417,6 @@
           </div>
         </div>
         <div class="achievement-info">
-          <h3>Ganhou 3cm em 3 músculos</h3>
           <p>Crescimento visível</p>
         </div>
         <div class="progress-wrapper">
@@ -6052,6 +5427,25 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- MODAL: detalhes da conquista (abre ao clicar em qualquer card, bloqueada ou não) -->
+    <div class="modal-overlay" id="achievementDetailOverlay">
+      <div class="modal-card achievement-detail-card">
+        <button class="close-modal-btn" id="closeAchievementDetailBtn">&times;</button>
+        <div class="achievement-detail-badge" id="achievementDetailBadgeWrap">
+          <img class="medal-badge" id="achievementDetailImg" src="" alt="">
+        </div>
+        <h3 id="achievementDetailTitle"></h3>
+        <p id="achievementDetailDesc"></p>
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div class="progress-bar" id="achievementDetailBar" style="width: 0%;"></div>
+          </div>
+          <div class="progress-text" id="achievementDetailProgressText"></div>
+        </div>
+        <div class="achievement-detail-date" id="achievementDetailDate"></div>
+      </div>
     </div>
   </div>
     `;
@@ -6762,6 +6156,7 @@
   let valorPesoAtualSalvo = profileData.pesoAtual;
   let valorPesoFocoSalvo = profileData.pesoFoco;
   let registrosPesosHistorico = profileData.registrosPesosHistorico || {}; 
+  let historicoPesosDetalhado = Array.isArray(profileData.historicoPesosDetalhado) ? profileData.historicoPesosDetalhado : [];
   let dataMetaSalvaFormatada = profileData.dataMetaSalvaFormatada; 
 
   let historicoDeMedidasRegistradas = profileData.historicoDeMedidasRegistradas || []; 
@@ -6971,11 +6366,9 @@
               tooltip: {
                   callbacks: {
                       title: function(context) {
-                          const nomeMes = context[0].label;
                           const datasetIndex = context[0].datasetIndex;
                           if (datasetIndex === 2 && dataMetaSalvaFormatada) return dataMetaSalvaFormatada;
-                          if (registrosPesosHistorico[nomeMes]) return registrosPesosHistorico[nomeMes].dataFormatada;
-                          return nomeMes;
+                          return context[0].label;
                       },
                       label: function(context) { return ` ${context.parsed.y} kg`; }
                   }
@@ -6994,40 +6387,28 @@
   });
 
   function recalcularGrafico() {
-    if (mesInicialIndex === null) return;
-    let mesesGerados = [];
-    if (mesFinalIndex !== null) {
-      let dif = mesFinalIndex - mesInicialIndex;
-      if (dif < 0) dif += 12;
-      for (let i = 0; i < 6; i++) {
-        let index = Math.round(mesInicialIndex + (dif / 5) * i) % 12;
-        mesesGerados.push(nomesMesesAbreviados[index]);
-      }
-    } else {
-      for (let i = 0; i < 6; i++) {
-        let index = (mesInicialIndex + i) % 12;
-        mesesGerados.push(nomesMesesAbreviados[index]);
-      }
-    }
+    if (historicoPesosDetalhado.length === 0) return;
 
-    meuGrafico.data.labels = mesesGerados;
-    const novosDadosPesos = Array(6).fill(null);
-    mesesGerados.forEach((nomeMes, index) => {
-      if (registrosPesosHistorico[nomeMes] !== undefined) {
-        novosDadosPesos[index] = registrosPesosHistorico[nomeMes].peso;
-      }
-    });
+    // Ordena por data e pega os últimos registros (cada mudança de peso vira um ponto)
+    const registrosOrdenados = [...historicoPesosDetalhado].sort((a, b) => a.data.localeCompare(b.data));
+    const ultimosRegistros = registrosOrdenados.slice(-6);
 
-    if (valorPesoAtualSalvo !== null) novosDadosPesos[0] = valorPesoAtualSalvo;
-    meuGrafico.data.datasets[0].data = novosDadosPesos;
+    const labels = ultimosRegistros.map(r => r.dataFormatada);
+    const pesos = ultimosRegistros.map(r => r.peso);
+
+    meuGrafico.data.labels = labels;
+    meuGrafico.data.datasets[0].data = pesos;
 
     if (valorPesoFocoSalvo !== null) {
-      meuGrafico.data.datasets[1].data = Array(6).fill(valorPesoFocoSalvo);
-      meuGrafico.data.datasets[2].data = [null, null, null, null, null, valorPesoFocoSalvo];
-      const menorPeso = Math.min(...novosDadosPesos.filter(p => p !== null), valorPesoFocoSalvo);
-      const maiorPeso = Math.max(...novosDadosPesos.filter(p => p !== null), valorPesoFocoSalvo);
+      meuGrafico.data.datasets[1].data = Array(labels.length).fill(valorPesoFocoSalvo);
+      meuGrafico.data.datasets[2].data = labels.map((_, i) => i === labels.length - 1 ? valorPesoFocoSalvo : null);
+      const menorPeso = Math.min(...pesos, valorPesoFocoSalvo);
+      const maiorPeso = Math.max(...pesos, valorPesoFocoSalvo);
       meuGrafico.options.scales.y.min = Math.floor((menorPeso - 10) / 10) * 10;
       meuGrafico.options.scales.y.max = Math.ceil((maiorPeso + 20) / 10) * 10;
+    } else {
+      meuGrafico.data.datasets[1].data = Array(labels.length).fill(null);
+      meuGrafico.data.datasets[2].data = Array(labels.length).fill(null);
     }
     meuGrafico.update();
   }
@@ -7036,20 +6417,32 @@
     e.preventDefault();
     const novoPeso = parseFloat(document.getElementById('weight-input-value').value);
     if (!isNaN(novoPeso) && novoPeso > 0 && dataMudancaAtual) {
+      const chaveHoje = hojeChaveData();
+      const jaRegistrouHoje = historicoPesosDetalhado.some(r => r.data === chaveHoje);
+      if (jaRegistrouHoje) {
+        alert('Você já registrou seu peso hoje. Volte amanhã para atualizar novamente.');
+        weightForm.reset();
+        weightModal.classList.remove('open');
+        return;
+      }
+
       document.getElementById('display-weight').textContent = novoPeso.toFixed(1).replace('.', ',') + ' kg';
       const mesDoLançamento = dataMudancaAtual.getMonth();
       const nomeMesLançamento = nomesMesesAbreviados[mesDoLançamento];
+      const dataFormatadaLançamento = `${String(dataMudancaAtual.getDate()).padStart(2, '0')}/${nomeMesLançamento}`;
       if (mesInicialIndex === null) {
         mesInicialIndex = mesDoLançamento;
-        valorPesoAtualSalvo = novoPeso;
       }
-      registrosPesosHistorico[nomeMesLançamento] = { peso: novoPeso, dataFormatada: `${String(dataMudancaAtual.getDate()).padStart(2, '0')}/${nomeMesLançamento}` };
+      valorPesoAtualSalvo = novoPeso;
+      registrosPesosHistorico[nomeMesLançamento] = { peso: novoPeso, dataFormatada: dataFormatadaLançamento };
+      historicoPesosDetalhado.push({ data: chaveHoje, peso: novoPeso, dataFormatada: dataFormatadaLançamento });
       registrarPeso(novoPeso);
       recalcularGrafico();
       definirMembroDesde();
       profileData.pesoAtual = novoPeso;
       profileData.mesInicialIndex = mesInicialIndex;
       profileData.registrosPesosHistorico = registrosPesosHistorico;
+      profileData.historicoPesosDetalhado = historicoPesosDetalhado;
       saveProfileData(profileData);
     }
     weightForm.reset();
@@ -7271,7 +6664,7 @@
     }
 
     // Gráfico de evolução do peso salvo
-    if (mesInicialIndex !== null) {
+    if (historicoPesosDetalhado.length > 0) {
       recalcularGrafico();
     }
   }
