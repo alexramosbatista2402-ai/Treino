@@ -1081,6 +1081,32 @@
     text-transform: uppercase;
     letter-spacing: -0.02em;
   }
+#tela-conquistas .achievements-overall-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+  }
+#tela-conquistas .achievements-overall-progress-bar-container {
+    width: 100%;
+    height: 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+#tela-conquistas .achievements-overall-progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    width: 0%;
+    background: linear-gradient(90deg, #FF7A3D, #FFB347);
+    transition: width 0.4s ease;
+  }
+#tela-conquistas .achievements-overall-progress-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(242, 241, 237, 0.65);
+  }
 #tela-conquistas .achievements-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1234,6 +1260,13 @@
   }
 #tela-conquistas .achievement-card.locked .progress-text {
     color: #55575C;
+  }
+  /* Conquista indisponível para a meta principal escolhida no perfil */
+#tela-conquistas .achievement-card.indisponivel {
+    opacity: 0.45;
+  }
+#tela-conquistas .achievement-card.indisponivel .progress-text {
+    font-style: italic;
   }
 
   /* ============= MODAL: DETALHES DA CONQUISTA ============= */
@@ -2692,16 +2725,16 @@
   };
 
   const ACHIEVEMENTS_CONFIG = {
-    'perder-1kg': { tipo: 'peso_perdido', meta: 1, unidade: 'kg' },
-    'perder-3kg': { tipo: 'peso_perdido', meta: 3, unidade: 'kg' },
-    'perder-5kg': { tipo: 'peso_perdido', meta: 5, unidade: 'kg' },
-    'perder-7kg': { tipo: 'peso_perdido', meta: 7, unidade: 'kg' },
-    'perder-10kg': { tipo: 'peso_perdido', meta: 10, unidade: 'kg' },
-    'ganhar-1kg': { tipo: 'peso_ganho', meta: 1, unidade: 'kg' },
-    'ganhar-3kg': { tipo: 'peso_ganho', meta: 3, unidade: 'kg' },
-    'ganhar-5kg': { tipo: 'peso_ganho', meta: 5, unidade: 'kg' },
-    'ganhar-7kg': { tipo: 'peso_ganho', meta: 7, unidade: 'kg' },
-    'ganhar-10kg': { tipo: 'peso_ganho', meta: 10, unidade: 'kg' },
+    'perder-1kg': { tipo: 'peso_perdido', meta: 1, unidade: 'kg', metaReq: ['Emagrecer'] },
+    'perder-3kg': { tipo: 'peso_perdido', meta: 3, unidade: 'kg', metaReq: ['Emagrecer'] },
+    'perder-5kg': { tipo: 'peso_perdido', meta: 5, unidade: 'kg', metaReq: ['Emagrecer'] },
+    'perder-7kg': { tipo: 'peso_perdido', meta: 7, unidade: 'kg', metaReq: ['Emagrecer'] },
+    'perder-10kg': { tipo: 'peso_perdido', meta: 10, unidade: 'kg', metaReq: ['Emagrecer'] },
+    'ganhar-1kg': { tipo: 'peso_ganho', meta: 1, unidade: 'kg', metaReq: ['Ganhar massa', 'Definição'] },
+    'ganhar-3kg': { tipo: 'peso_ganho', meta: 3, unidade: 'kg', metaReq: ['Ganhar massa', 'Definição'] },
+    'ganhar-5kg': { tipo: 'peso_ganho', meta: 5, unidade: 'kg', metaReq: ['Ganhar massa', 'Definição'] },
+    'ganhar-7kg': { tipo: 'peso_ganho', meta: 7, unidade: 'kg', metaReq: ['Ganhar massa', 'Definição'] },
+    'ganhar-10kg': { tipo: 'peso_ganho', meta: 10, unidade: 'kg', metaReq: ['Ganhar massa', 'Definição'] },
     'primeiro-treino': { tipo: 'exercicios_total', meta: 1 },
     '7-dias-treino': { tipo: 'dias_treinados', meta: 10 },
     'semana-cheia': { tipo: 'dias_consecutivos', meta: 7 },
@@ -2774,10 +2807,20 @@
     'ganho-3cm-3musculos': { titulo: 'Ganhou 3cm em 5 músculos', desc: 'Crescimento visível' }
   };
 
+  // Verifica se a meta principal escolhida no perfil permite essa conquista
+  // (ex: conquistas de "perder peso" só valem se a meta for "Emagrecer";
+  // conquistas de "ganhar peso" só valem se a meta for "Ganhar massa" ou "Definição")
+  function metaPermiteConquista(cfg) {
+    if (!cfg || !cfg.metaReq) return true;
+    const profileData = getProfileData();
+    return cfg.metaReq.includes(profileData.meta);
+  }
+
   // Calcula o progresso atual de uma conquista a partir das estatísticas
   function calcularProgressoConquista(id, stats, diasConsecutivos) {
     const cfg = ACHIEVEMENTS_CONFIG[id];
     if (!cfg) return { atual: 0, atingiu: false };
+    if (!metaPermiteConquista(cfg)) return { atual: 0, atingiu: false, indisponivel: true };
     let atual = 0;
     if (cfg.tipo === 'peso_perdido') {
       if (stats.pesoInicial !== null && stats.pesoAtual !== null) atual = Math.max(0, stats.pesoInicial - stats.pesoAtual);
@@ -2863,13 +2906,20 @@
     const stats = getStats();
     const diasConsecutivos = calcularDiasConsecutivos(stats.diasTreinados);
 
+    let totalDisponiveis = 0;
+    let totalDesbloqueadas = 0;
+
     document.querySelectorAll('#tela-conquistas .achievement-card[data-achievement]').forEach(card => {
       const id = card.getAttribute('data-achievement');
       const cfg = ACHIEVEMENTS_CONFIG[id];
       if (!cfg) return;
 
+      const permitido = metaPermiteConquista(cfg);
+
       let atual = 0;
-      if (cfg.tipo === 'peso_perdido') {
+      if (!permitido) {
+        atual = 0;
+      } else if (cfg.tipo === 'peso_perdido') {
         if (stats.pesoInicial !== null && stats.pesoAtual !== null) atual = Math.max(0, stats.pesoInicial - stats.pesoAtual);
       } else if (cfg.tipo === 'peso_ganho') {
         if (stats.pesoInicial !== null && stats.pesoAtual !== null) atual = Math.max(0, stats.pesoAtual - stats.pesoInicial);
@@ -2896,9 +2946,16 @@
       }
 
       atual = Math.min(atual, cfg.meta);
-      const atingiu = atual >= cfg.meta;
+      const atingiu = permitido && atual >= cfg.meta;
       card.classList.toggle('unlocked', atingiu);
       card.classList.toggle('locked', !atingiu);
+      card.classList.toggle('indisponivel', !permitido);
+      card.style.display = permitido ? '' : 'none';
+
+      if (permitido) {
+        totalDisponiveis++;
+        if (atingiu) totalDesbloqueadas++;
+      }
 
       const img = card.querySelector('.medal-badge');
       if (img && ACHIEVEMENT_IMAGES[id]) img.src = ACHIEVEMENT_IMAGES[id];
@@ -2907,19 +2964,41 @@
 
       const bar = card.querySelector('.progress-bar');
       const text = card.querySelector('.progress-text');
-      const pct = Math.min(100, Math.round((atual / cfg.meta) * 100));
+      const pct = permitido ? Math.min(100, Math.round((atual / cfg.meta) * 100)) : 0;
       if (bar) bar.style.width = pct + '%';
       if (text) {
-        const original = text.textContent;
-        const sufixoMatch = original.match(/\/\s*[\d.,]+\s*(.*)$/);
-        const sufixo = sufixoMatch ? sufixoMatch[1].trim() : '';
-        const metaFormatada = cfg.meta.toLocaleString('pt-BR');
-        const atualFormatado = cfg.unidade === 'kg'
-          ? atual.toFixed(1).replace('.', ',')
-          : Math.floor(atual).toLocaleString('pt-BR');
-        text.textContent = `${atualFormatado} / ${metaFormatada}${sufixo ? ' ' + sufixo : ''}`;
+        // Guarda o sufixo de unidade original (ex: "kg") uma única vez,
+        // para não perdê-lo quando o texto for trocado pela mensagem de indisponibilidade
+        if (text.dataset.sufixo === undefined) {
+          const original = text.textContent;
+          const sufixoMatch = original.match(/\/\s*[\d.,]+\s*(.*)$/);
+          text.dataset.sufixo = sufixoMatch ? sufixoMatch[1].trim() : '';
+        }
+        const sufixo = text.dataset.sufixo;
+
+        if (!permitido) {
+          text.textContent = `Disponível para meta: ${cfg.metaReq.join(' ou ')}`;
+        } else {
+          const metaFormatada = cfg.meta.toLocaleString('pt-BR');
+          const atualFormatado = cfg.unidade === 'kg'
+            ? atual.toFixed(1).replace('.', ',')
+            : Math.floor(atual).toLocaleString('pt-BR');
+          text.textContent = `${atualFormatado} / ${metaFormatada}${sufixo ? ' ' + sufixo : ''}`;
+        }
       }
     });
+
+    // Atualiza a barra de progresso geral no topo, contando só as
+    // conquistas disponíveis para a meta principal atual
+    const overallBar = document.getElementById('conquistasProgressBar');
+    const overallText = document.getElementById('conquistasProgressText');
+    if (overallBar) {
+      const overallPct = totalDisponiveis > 0 ? Math.round((totalDesbloqueadas / totalDisponiveis) * 100) : 0;
+      overallBar.style.width = overallPct + '%';
+    }
+    if (overallText) {
+      overallText.textContent = `${totalDesbloqueadas} / ${totalDisponiveis} conquistas`;
+    }
 
     // Liga o botão de fechar do modal de detalhes (recriado a cada renderização da tela)
     const closeDetailBtn = document.getElementById('closeAchievementDetailBtn');
@@ -3909,7 +3988,7 @@
   let exDetailGifInterval = null; // guarda o intervalo do GIF da tela de detalhe
 
  
-  const DATABASE_VERSION = "v19_youtube_video";
+  const DATABASE_VERSION = "v20_fotos_atualizadas";
 
   const DEFAULT_EXERCISES = [
     // Peito
@@ -4553,6 +4632,12 @@
 <div id="tela-conquistas" class="content">
     <header class="workout-header">
       <h1>Suas Conquistas 🏅</h1>
+      <div class="achievements-overall-progress">
+        <div class="achievements-overall-progress-bar-container">
+          <div class="achievements-overall-progress-bar" id="conquistasProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="achievements-overall-progress-text" id="conquistasProgressText">0 / 0 conquistas</div>
+      </div>
     </header>
 
     <svg width="0" height="0" style="position:absolute">
