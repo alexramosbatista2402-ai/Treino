@@ -2617,14 +2617,17 @@
     return streak;
   }
 
-  // Verifica se, no mês atual, houve pelo menos um treino em cada semana já iniciada
-  function treinouTodasSemanasDoMes(diasTreinados) {
+  // Verifica se, no mês atual, o usuário treinou pelo menos `minDiasSemana` dias
+  // em CADA semana já iniciada (e cada semana já iniciada precisa estar totalmente
+  // encerrada, exceto a semana atual, que só conta se já tiver cumprido a meta)
+  function treinouTodasSemanasDoMes(diasTreinados, minDiasSemana = 1) {
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = hoje.getMonth();
     const diasDoMes = new Date(ano, mes + 1, 0).getDate();
     const prefixoMes = `${ano}-${String(mes + 1).padStart(2, '0')}`;
     const diasTreinadosSet = new Set((diasTreinados || []).filter(d => d.startsWith(prefixoMes)));
+    const hojeZerado = new Date(ano, mes, hoje.getDate()).getTime();
 
     // Agrupa os dias do mês em semanas de calendário (domingo a sábado)
     const semanas = [];
@@ -2639,13 +2642,16 @@
     }
 
     // Só considera semanas que já começaram até hoje
-    const semanasRelevantes = semanas.filter(semana => semana[0].getTime() <= hoje.setHours(0, 0, 0, 0));
+    const semanasRelevantes = semanas.filter(semana => semana[0].getTime() <= hojeZerado);
     if (semanasRelevantes.length === 0) return false;
 
-    return semanasRelevantes.every(semana => semana.some(data => {
-      const str = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
-      return diasTreinadosSet.has(str);
-    }));
+    return semanasRelevantes.every(semana => {
+      const diasTreinadosNaSemana = semana.filter(data => {
+        const str = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+        return diasTreinadosSet.has(str);
+      }).length;
+      return diasTreinadosNaSemana >= minDiasSemana;
+    });
   }
 
   // Soma o total de fotos de evolução já publicadas
@@ -2759,7 +2765,7 @@
     'carga-5-exercicios': { tipo: 'carga_aumentada', meta: 5 },
     'carga-primeira-vez': { tipo: 'carga_aumentada', meta: 1 },
     'carga-10-exercicios': { tipo: 'carga_aumentada', meta: 10 },
-    'semana-total-mes': { tipo: 'semanas_mes', meta: 1 },
+    'semana-total-mes': { tipo: 'semanas_mes', meta: 1, minDiasSemana: 3 },
     'primeira-evolucao': { tipo: 'fotos_evolucao', meta: 2 },
     'ganho-1cm-todos': { tipo: 'medidas_todos_1cm', meta: 8 },
     'ganho-3cm-3musculos': { tipo: 'medidas_3musculos_3cm', meta: 5 }
@@ -2837,7 +2843,7 @@
     } else if (cfg.tipo === 'carga_aumentada') {
       atual = (stats.exerciciosComCargaAumentada || []).length;
     } else if (cfg.tipo === 'semanas_mes') {
-      atual = treinouTodasSemanasDoMes(stats.diasTreinados) ? 1 : 0;
+      atual = treinouTodasSemanasDoMes(stats.diasTreinados, cfg.minDiasSemana || 1) ? 1 : 0;
     } else if (cfg.tipo === 'fotos_evolucao') {
       atual = totalFotosEvolucao(stats.fotosPorData);
     } else if (cfg.tipo === 'medidas_todos_1cm') {
@@ -2934,7 +2940,7 @@
       } else if (cfg.tipo === 'carga_aumentada') {
         atual = (stats.exerciciosComCargaAumentada || []).length;
       } else if (cfg.tipo === 'semanas_mes') {
-        atual = treinouTodasSemanasDoMes(stats.diasTreinados) ? 1 : 0;
+        atual = treinouTodasSemanasDoMes(stats.diasTreinados, cfg.minDiasSemana || 1) ? 1 : 0;
       } else if (cfg.tipo === 'fotos_evolucao') {
         atual = totalFotosEvolucao(stats.fotosPorData);
       } else if (cfg.tipo === 'medidas_todos_1cm') {
@@ -3996,7 +4002,7 @@
     { id: "supino-inclinado-barra", name: "Supino Inclinado", variation: "(barra)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/db13e7da-07a1-4000-a5a4-d7dd9b0907b0.gif", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "peck-deck", name: "Peck Deck", variation: "(voador)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/97503c1c-ef93-4d09-aaf0-9c059d39acce.gif", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-maquina", name: "Supino na Máquina", variation: "", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/771d1406-bee6-46ef-bd4a-25549178dc22/45471a3d-d463-458c-b488-d21e6efad846.gif", isFavorite: false, completedToday: false, muscle: "peito" },
-    { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/6506e39e-fa9e-4ef2-a976-ae91a0e0601e.gif", isFavorite: false, completedToday: false, muscle: "peito" },
+    { id: "supino-reto-halteres", name: "Supino Reto", variation: "(halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "supino-reto-halteres.gif", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-inclinado-halteres", name: "Supino Inclinado", variation: "(halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/771d1406-bee6-46ef-bd4a-25549178dc22/24febaca-7b5f-46a5-9bea-6307b8b54f6a.gif", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "supino-declinado", name: "Supino Declinado", variation: "(barra ou halteres)", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/771d1406-bee6-46ef-bd4a-25549178dc22/a3ae4235-da4f-4e14-a7ef-69f2ef5e1142.gif", isFavorite: false, completedToday: false, muscle: "peito" },
     { id: "crucifixo-reto-halteres", name: "Crucifixo Reto", variation: "com Halteres", series: 3, reps: 12, weight: "0", rest: 90, image: "https://i.supaimg.com/22ca7180-12db-480e-a1cc-754dd189b120/f43aae27-7bc7-4bb1-ad88-c3e56c08bac7.gif", isFavorite: false, completedToday: false, muscle: "peito" },
@@ -4097,6 +4103,13 @@
 
   const DEFAULT_HISTORY = {};
   let historyDatabase = JSON.parse(localStorage.getItem('workout_history_db')) || DEFAULT_HISTORY;
+
+  // Retorna a data de hoje já formatada como dd/mm/yyyy (usa a formatarDataBR já existente no app)
+  function dataDeHojeFormatada() {
+    const hoje = new Date();
+    const chave = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+    return formatarDataBR(chave);
+  }
 
   function checkDailyReset() {
     const todayStr = new Date().toDateString(); 
@@ -4322,7 +4335,8 @@
         const lastTwoDays = muscleHistory.slice(0, 2);
         let htmlStr = '<div class="history-wrapper">';
         lastTwoDays.forEach(day => {
-          htmlStr += `<div class="history-day-group"><span class="history-day-title">${day.date}:</span><div class="history-day-list">`;
+          const rotuloDia = day.date === 'Hoje' ? 'Hoje' : (day.realDate ? `Treino Anterior - ${day.realDate}` : day.date);
+          htmlStr += `<div class="history-day-group"><span class="history-day-title">${rotuloDia}:</span><div class="history-day-list">`;
           day.exercises.forEach(ex => {
             htmlStr += `<div class="history-day-item"><span class="ex-name">${ex.name}</span><span class="ex-weight" style="color: var(--amber);">${ex.weight}</span></div>`;
           });
@@ -4432,7 +4446,10 @@
     const matches = [];
     muscleHistory.forEach(day => {
       const found = (day.exercises || []).find(item => item.name === exFullName);
-      if (found) matches.push({ date: day.date, weight: found.weight });
+      if (found) {
+        const rotuloDia = day.date === 'Hoje' ? 'Hoje' : (day.realDate ? `Treino Anterior - ${day.realDate}` : day.date);
+        matches.push({ date: rotuloDia, weight: found.weight });
+      }
     });
     const lastTwo = matches.slice(0, 2);
     if (lastTwo.length === 0) {
@@ -4460,7 +4477,7 @@
         const exFullName = `${ex.name} ${ex.variation || ''}`.trim();
         const weightStr = pesoKg.includes('kg') ? pesoKg : `${pesoKg}kg`;
         if (logIndex === -1) {
-          historyDatabase[activeMuscleGroup].unshift({ date: "Hoje", exercises: [{ name: exFullName, weight: weightStr }] });
+          historyDatabase[activeMuscleGroup].unshift({ date: "Hoje", realDate: dataDeHojeFormatada(), exercises: [{ name: exFullName, weight: weightStr }] });
         } else {
           const dayLog = historyDatabase[activeMuscleGroup][logIndex];
           const exIndexInDay = dayLog.exercises.findIndex(item => item.name === exFullName);
